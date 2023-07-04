@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paddi.service.module.friendship.mapper.FriendShipMapper">
+
+    <select id="checkFriendShip"
+            resultType="com.paddi.service.module.friendship.model.resp.CheckFriendShipResponse">
+        select from_id, to_id, if(status = 1, 1, 0) as status
+        from im_friendship
+        where from_id = #{fromId}
+        and to_id in
+        <foreach collection="toIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="checkFriendShipBoth"
+            resultType="com.paddi.service.module.friendship.model.resp.CheckFriendShipResponse">
+        select a.from_id, a.to_id, (
+            case
+                when a.status = 1 and b.status = 1 then 1
+                when a.status = 1 and b.status != 1 then 2
+                when a.status != 1 and b.status = 1 then 3
+                when a.status != 1 and b.status != 1 then 4
+        ) as status
+        from (
+                select from_id, to_id, if(status = 1, 1, 0) as status
+                from im_friendship
+                where from_id = #{fromId}
+                and to_id in
+                <foreach collection="toIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+             ) as a
+        inner join (
+                select from_id, to_id, if(status = 1, 1, 0) as status
+                from im_friendship
+                where to_id = #{fromId}
+                and from_id in
+                <foreach collection="toIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+        ) as b
+        as a.from_id = b.to_id and a.to_id = b.from_id
+    </select>
+
+    <select id="checkBlackFriendShip"
+            resultType="com.paddi.service.module.friendship.model.resp.CheckFriendShipResponse">
+        select from_id, to_id, if(black = 1, 1, 0) as status
+        from im_friendship
+        where from_id = #{fromId}
+        and to_id in
+        <foreach collection="toIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="checkBlackFriendShipBoth"
+            resultType="com.paddi.service.module.friendship.model.resp.CheckFriendShipResponse">
+        select a.from_id, a.to_id, (
+            case
+            when a.black = 1 and b.black = 1 then 1
+            when a.black = 1 and b.black != 1 then 2
+            when a.black != 1 and b.black = 1 then 3
+            when a.black != 1 and b.black != 1 then 4
+        ) as status
+        from (
+            select from_id, to_id, if(black = 1, 1, 0) as black
+            from im_friendship
+            where from_id = #{fromId}
+            and to_id in
+            <foreach collection="toIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        ) as a
+        inner join (
+            select from_id, to_id, if(black = 1, 1, 0) as black
+            from im_friendship
+            where to_id = #{fromId}
+            and from_id in
+            <foreach collection="toIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        ) as b
+        as a.from_id = b.to_id and a.to_id = b.from_id
+    </select>
+</mapper>

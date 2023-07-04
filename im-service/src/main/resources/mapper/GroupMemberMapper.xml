@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paddi.service.module.group.mapper.GroupMemberMapper">
+
+    <select id="getGroupMember" resultType="com.paddi.service.module.group.entity.vo.GroupMemberVO">
+        select member_id, role,
+               speak_date, alias, join_time, join_type
+        from im_group_member
+        where app_id = #{appId}
+        and group_id = #{groupId}
+    </select>
+
+    <select id="getJoinedGroupIdList" resultType="java.lang.String">
+        select group_id
+        from im_group_member
+        where app_id = #{appId}
+        and member_id = #{memberId}
+    </select>
+</mapper>

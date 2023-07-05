@@ -17,6 +17,11 @@ logging:
 server:
   port: 8000
 
+im-server:
+  zkServers: 8.134.134.68:2181
+  connectionTimeout: 5000
+  loadBalanceStrategy: 3 #负载均衡策略 1-随机 2-轮询 3-一致性哈希
+  consistentHashAlgorithm: 1 #1-使用TreeMap实现一致性哈希算法
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

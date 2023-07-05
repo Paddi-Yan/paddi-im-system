@@ -1,4 +1,4 @@
-package com.paddi.common.util;
+package com.paddi.common.utils;
 
 import java.time.Duration;
 import java.time.format.DateTimeParseException;

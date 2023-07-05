@@ -7,6 +7,7 @@
       <array>
         <option value="paddi-im-server:2948757" />
         <option value="service:2948757" />
+        <option value="im-service:2948757" />
       </array>
     </option>
     <option name="yapiTokens" value="" />

@@ -13,7 +13,7 @@ import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.exception.BadRequestException;
 import com.paddi.common.model.PageParam;
 import com.paddi.common.model.Result;
-import com.paddi.common.util.PageUtils;
+import com.paddi.common.utils.PageUtils;
 import com.paddi.service.module.group.entity.dto.GroupMemberDTO;
 import com.paddi.service.module.group.entity.po.Group;
 import com.paddi.service.module.group.entity.po.GroupMember;

@@ -1,4 +1,4 @@
-package com.paddi.common.util;
+package com.paddi.common.utils;
 
 
 import com.paddi.common.exception.BadRequestException;

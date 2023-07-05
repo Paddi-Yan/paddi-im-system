@@ -1,4 +1,4 @@
-package com.paddi.common.util;
+package com.paddi.common.utils;
 
 import org.apache.commons.codec.binary.Base64;
 

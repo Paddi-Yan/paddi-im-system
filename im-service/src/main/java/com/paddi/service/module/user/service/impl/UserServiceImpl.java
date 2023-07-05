@@ -1,10 +1,13 @@
 package com.paddi.service.module.user.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.DelFlagEnum;
 import com.paddi.common.enums.UserErrorCode;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.model.Result;
+import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.user.entity.po.User;
 import com.paddi.service.module.user.mapper.UserMapper;
 import com.paddi.service.module.user.model.req.DeleteUserRequest;
@@ -14,6 +17,7 @@ import com.paddi.service.module.user.model.req.ModifyUserInfoRequest;
 import com.paddi.service.module.user.model.resp.GetUserInfoResponse;
 import com.paddi.service.module.user.model.resp.ImportUserResponse;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.utils.CallbackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private ApplicationConfiguration configuration;
+
+    @Autowired
+    private CallbackService callbackService;
 
     @Override
     public Result importUser(ImportUserRequest importUserRequest) {
@@ -138,6 +148,11 @@ public class UserServiceImpl implements UserService {
                                                                .eq(User :: getUserId, request.getUserId())
                                                                .eq(User :: getDelFlag, DelFlagEnum.NORMAL.getCode()));
         if(update == 1) {
+            if(configuration.getModifyUserAfterCallback()) {
+                callbackService.callbackAsync(request.getAppId(),
+                        Constants.CallbackCommand.ModifyUserAfter,
+                        JSONObject.toJSONString(request));
+            }
             return Result.success();
         }
         throw new ApplicationException(UserErrorCode.MODIFY_USER_ERROR);

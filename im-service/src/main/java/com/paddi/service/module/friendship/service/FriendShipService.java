@@ -14,6 +14,8 @@ public interface FriendShipService {
 
     Result addFriend(AddFriendRequest request);
 
+    Result updateFriend(UpdateFriendRequest request);
+
     Result doAddFriend(String fromId, FriendDTO toItem, Integer appId);
 
     Result deleteFriend(DeleteFriendRequest request);

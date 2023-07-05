@@ -3,8 +3,10 @@ package com.paddi.service.module.group.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.GroupErrorCode;
 import com.paddi.common.enums.GroupMemberRoleEnum;
 import com.paddi.common.enums.GroupStatusEnum;
@@ -12,6 +14,7 @@ import com.paddi.common.enums.GroupTypeEnum;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.exception.BadRequestException;
 import com.paddi.common.model.Result;
+import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.group.entity.dto.GroupMemberDTO;
 import com.paddi.service.module.group.entity.po.Group;
 import com.paddi.service.module.group.entity.vo.GroupMemberVO;
@@ -22,6 +25,7 @@ import com.paddi.service.module.group.model.resp.GetJoinedGroupResponse;
 import com.paddi.service.module.group.model.resp.GetMemberRoleResponse;
 import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.group.service.GroupService;
+import com.paddi.service.utils.CallbackService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupMemberService groupMemberService;
+
+    @Autowired
+    private ApplicationConfiguration configuration;
+
+    @Autowired
+    private CallbackService callbackService;
 
 
     @Override
@@ -108,6 +118,15 @@ public class GroupServiceImpl implements GroupService {
             throw new BadRequestException(GroupErrorCode.PUBLIC_GROUP_MUST_HAVE_OWNER);
         }
 
+        if(configuration.isCreateGroupBeforeCallback()) {
+            Result result = callbackService.callbackSync(request.getAppId(),
+                    Constants.CallbackCommand.CreateGroupBefore,
+                    JSONObject.toJSONString(request));
+            if(!result.isSuccess()) {
+                return result;
+            }
+        }
+
         Group group = new Group();
         group.setCreateTime(System.currentTimeMillis());
         group.setStatus(GroupStatusEnum.NORMAL.getCode());
@@ -123,6 +142,12 @@ public class GroupServiceImpl implements GroupService {
         //插入群成员信息
         for(GroupMemberDTO groupMember : request.getMember()) {
             groupMemberService.doAddGroupMember(request.getGroupId(), request.getAppId(), groupMember);
+        }
+
+        if(configuration.isCreateGroupAfterCallback()) {
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.CreateGroupAfter,
+                    JSONObject.toJSONString(group));
         }
         return Result.success();
     }

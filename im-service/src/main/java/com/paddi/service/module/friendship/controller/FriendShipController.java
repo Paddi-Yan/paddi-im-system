@@ -31,6 +31,12 @@ public class FriendShipController {
         return friendShipService.addFriend(request);
     }
 
+    @PutMapping("/updateFriend")
+    public Result updateFriend(@RequestBody @Validated UpdateFriendRequest request, Integer appId){
+        request.setAppId(appId);
+        return friendShipService.updateFriend(request);
+    }
+
     @DeleteMapping("/deleteFriend")
     public Result deleteFriend(@RequestBody @Validated DeleteFriendRequest request, Integer appId){
         request.setAppId(appId);

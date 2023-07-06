@@ -1,0 +1,93 @@
+2023-07-04 23:25:10 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 32048 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-04 23:25:10 -The following profiles are active: dev
+2023-07-04 23:25:10 -Tomcat initialized with port(s): 8000 (http)
+2023-07-04 23:25:10 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:25:10 -Starting service [Tomcat]
+2023-07-04 23:25:10 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-04 23:25:10 -Initializing Spring embedded WebApplicationContext
+2023-07-04 23:25:10 -Root WebApplicationContext: initialization completed in 706 ms
+2023-07-04 23:25:16 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:25:16 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:25:16 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-04 23:25:16 -Started ServiceApplication in 6.657 seconds (JVM running for 7.51)
+2023-07-04 23:28:53 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-04 23:28:53 -Initializing Servlet 'dispatcherServlet'
+2023-07-04 23:28:53 -Completed initialization in 6 ms
+2023-07-04 23:28:54 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:28:56 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:28:57 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:28:58 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:28:59 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:29:00 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:29:06 -query all tcp server node = [["192.168.18.113:9001","10.73.139.134:9000","192.168.18.113:9000"]] successfully
+2023-07-04 23:29:09 -query all tcp server node = [["192.168.18.113:9001","10.73.139.134:9000","192.168.18.113:9000"]] successfully
+2023-07-04 23:29:10 -query all tcp server node = [["192.168.18.113:9001","10.73.139.134:9000","192.168.18.113:9000"]] successfully
+2023-07-04 23:29:10 -query all tcp server node = [["192.168.18.113:9001","10.73.139.134:9000","192.168.18.113:9000"]] successfully
+2023-07-04 23:38:41 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:38:46 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 32420 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-04 23:38:46 -The following profiles are active: dev
+2023-07-04 23:38:47 -Tomcat initialized with port(s): 8000 (http)
+2023-07-04 23:38:47 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:38:47 -Starting service [Tomcat]
+2023-07-04 23:38:47 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-04 23:38:47 -Initializing Spring embedded WebApplicationContext
+2023-07-04 23:38:47 -Root WebApplicationContext: initialization completed in 589 ms
+2023-07-04 23:38:52 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:38:52 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:39:27 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 13364 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-04 23:39:27 -The following profiles are active: dev
+2023-07-04 23:39:28 -Tomcat initialized with port(s): 8000 (http)
+2023-07-04 23:39:28 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:39:28 -Starting service [Tomcat]
+2023-07-04 23:39:28 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-04 23:39:28 -Initializing Spring embedded WebApplicationContext
+2023-07-04 23:39:28 -Root WebApplicationContext: initialization completed in 656 ms
+2023-07-04 23:39:33 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:39:33 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:39:33 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-04 23:39:33 -Started ServiceApplication in 6.718 seconds (JVM running for 7.36)
+2023-07-04 23:39:43 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-04 23:39:43 -Initializing Servlet 'dispatcherServlet'
+2023-07-04 23:39:43 -Completed initialization in 4 ms
+2023-07-04 23:39:43 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:46 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:47 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:47 -Index: 3, Size: 3
+2023-07-04 23:39:51 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:53 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:53 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:54 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:39:54 -Index: 3, Size: 3
+2023-07-04 23:41:06 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:41:49 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:41:59 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:42:09 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:42:21 -Index: 3, Size: 3
+2023-07-04 23:43:28 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:43:48 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:44:01 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:44:18 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:44:45 -Index: 3, Size: 3
+2023-07-04 23:44:45 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:44:50 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 17556 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-04 23:44:50 -The following profiles are active: dev
+2023-07-04 23:44:51 -Tomcat initialized with port(s): 8000 (http)
+2023-07-04 23:44:51 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:44:51 -Starting service [Tomcat]
+2023-07-04 23:44:51 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-04 23:44:51 -Initializing Spring embedded WebApplicationContext
+2023-07-04 23:44:51 -Root WebApplicationContext: initialization completed in 661 ms
+2023-07-04 23:44:56 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-04 23:44:56 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-04 23:44:56 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-04 23:44:56 -Started ServiceApplication in 6.731 seconds (JVM running for 7.347)
+2023-07-04 23:45:00 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-04 23:45:00 -Initializing Servlet 'dispatcherServlet'
+2023-07-04 23:45:00 -Completed initialization in 4 ms
+2023-07-04 23:45:00 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:06 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:07 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:08 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:09 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:10 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-04 23:45:11 -query all websocket server node = [["192.168.18.113:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully

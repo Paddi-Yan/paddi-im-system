@@ -4,7 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = {"com.paddi.common"})
+@SpringBootApplication(scanBasePackages = {"com.paddi.common", "com.paddi.service"})
 @MapperScan("com.paddi.service.module.*.mapper")
 public class ServiceApplication {
 

@@ -1,6 +1,6 @@
 package com.paddi.strategy.multi;
 
-import com.paddi.codec.protocol.MessagePack;
+import com.paddi.codec.protocol.MessagePackage;
 import com.paddi.common.enums.command.SystemCommand;
 import com.paddi.common.model.UserClientDTO;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -33,11 +33,11 @@ public interface MultiTerminalLoginProcessStrategy {
 
     default void sendOfflineMessage(NioSocketChannel channel) {
         String userId = (String) channel.attr(AttributeKey.valueOf(USERID)).get();
-        MessagePack messagePack = new MessagePack();
-        messagePack.setUserId(userId);
-        messagePack.setToId(userId);
-        messagePack.setCommand(SystemCommand.MUTUALLOGIN.getCommand());
-        channel.writeAndFlush(messagePack);
+        MessagePackage messagePackage = new MessagePackage();
+        messagePackage.setUserId(userId);
+        messagePackage.setToId(userId);
+        messagePackage.setCommand(SystemCommand.MUTUALLOGIN.getCommand());
+        channel.writeAndFlush(messagePackage);
     }
 
 }

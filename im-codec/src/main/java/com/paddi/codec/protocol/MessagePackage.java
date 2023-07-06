@@ -1,18 +1,24 @@
 package com.paddi.codec.protocol;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
- * 消息服务发送给TCP的包体,TCP再根据包体解析成Message发送给客户端
+ * 消息服务端发送给TCP网关的包体,TCP再根据包体解析成Message发送给客户端
  *
  * @Author: Paddi-Yan
  * @Project: im-system
  * @CreatedTime: 2023年07月03日 12:30:00
  */
 @Data
-public class MessagePack<T> implements Serializable {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MessagePackage<T> implements Serializable {
     private static final long serialVersionUID = -5029939378450218760L;
 
     private String userId;

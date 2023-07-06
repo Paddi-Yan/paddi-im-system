@@ -31,6 +31,8 @@ public class ApplicationConfiguration {
 
     private boolean addFriendBeforeCallback; //添加好友之前回调开关
 
+    private boolean modifyFriendBeforeCallback; //修改好友之前回调开关
+
     private boolean modifyFriendAfterCallback; //修改好友之后回调开关
 
     private boolean deleteFriendAfterCallback; //删除好友之后回调开关
@@ -46,6 +48,8 @@ public class ApplicationConfiguration {
     private boolean modifyGroupAfterCallback; //修改群聊之后回调开关
 
     private boolean destroyGroupAfterCallback;//解散群聊之后回调开关
+
+    private boolean transferGroupAfterCallback;//转让群聊之后回调开关
 
     private boolean deleteGroupMemberAfterCallback;//删除群成员之后回调
 

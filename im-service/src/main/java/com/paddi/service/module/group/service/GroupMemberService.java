@@ -34,4 +34,8 @@ public interface GroupMemberService {
     Result doRemoveGroupMember(String groupId, Integer appId, String memberId);
 
     Result updateGroupMember(UpdateGroupMemberRequest request);
+
+    List<String> getGroupMemberId(String groupId, Integer appId);
+
+    List<GroupMemberVO> getGroupManager(String groupId, Integer appId);
 }

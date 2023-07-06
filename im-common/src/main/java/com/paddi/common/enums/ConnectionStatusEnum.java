@@ -1,6 +1,6 @@
 package com.paddi.common.enums;
 
-public enum ImConnectStatusEnum {
+public enum ConnectionStatusEnum {
 
     /**
      * 管道链接状态,1=在线，0=离线
@@ -12,7 +12,7 @@ public enum ImConnectStatusEnum {
 
     private Integer code;
 
-    ImConnectStatusEnum(Integer code){
+    ConnectionStatusEnum(Integer code){
         this.code=code;
     }
 

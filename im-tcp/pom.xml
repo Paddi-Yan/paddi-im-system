@@ -44,7 +44,8 @@
             <artifactId>im-codec</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- codec --><!-- netty -->
+        <!-- codec -->
+        <!-- netty -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>

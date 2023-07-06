@@ -1,7 +1,7 @@
 package com.paddi.codec;
 
 import com.alibaba.fastjson.JSONObject;
-import com.paddi.codec.protocol.MessagePack;
+import com.paddi.codec.protocol.MessagePackage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -17,11 +17,11 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class MessageEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf byteBuf) throws Exception {
-        if(msg instanceof MessagePack) {
-            MessagePack messagePack = (MessagePack) msg;
-            String s = JSONObject.toJSONString(messagePack);
+        if(msg instanceof MessagePackage) {
+            MessagePackage messagePackage = (MessagePackage) msg;
+            String s = JSONObject.toJSONString(messagePackage);
             byte[] bytes = s.getBytes();
-            byteBuf.writeInt(messagePack.getCommand());
+            byteBuf.writeInt(messagePackage.getCommand());
             byteBuf.writeInt(bytes.length);
             byteBuf.writeBytes(bytes);
         }

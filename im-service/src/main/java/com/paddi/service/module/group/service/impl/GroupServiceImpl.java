@@ -6,13 +6,16 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.codec.pack.group.*;
 import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.GroupErrorCode;
 import com.paddi.common.enums.GroupMemberRoleEnum;
 import com.paddi.common.enums.GroupStatusEnum;
 import com.paddi.common.enums.GroupTypeEnum;
+import com.paddi.common.enums.command.GroupEventCommand;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.exception.BadRequestException;
+import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.group.entity.dto.GroupMemberDTO;
@@ -26,6 +29,7 @@ import com.paddi.service.module.group.model.resp.GetMemberRoleResponse;
 import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.group.service.GroupService;
 import com.paddi.service.utils.CallbackService;
+import com.paddi.service.utils.GroupMessageProducer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +58,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private CallbackService callbackService;
+
+    @Autowired
+    private GroupMessageProducer groupMessageProducer;
 
 
     @Override
@@ -149,6 +156,12 @@ public class GroupServiceImpl implements GroupService {
                     Constants.CallbackCommand.CreateGroupAfter,
                     JSONObject.toJSONString(group));
         }
+
+        CreateGroupPackage createGroupPackage = new CreateGroupPackage();
+        BeanUtils.copyProperties(group, createGroupPackage);
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.CREATED_GROUP, createGroupPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
     }
 
@@ -206,6 +219,18 @@ public class GroupServiceImpl implements GroupService {
         if(res != 1) {
             throw new ApplicationException(GroupErrorCode.UPDATE_GROUP_BASE_INFO_ERROR);
         }
+
+        if(configuration.isModifyGroupAfterCallback()) {
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.UpdateGroupAfter,
+                    JSONObject.toJSONString(request));
+        }
+
+        UpdateGroupInfoPackage updateGroupInfoPackage = new UpdateGroupInfoPackage();
+        BeanUtils.copyProperties(request, updateGroupInfoPackage);
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.UPDATED_GROUP, updateGroupInfoPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
     }
 
@@ -261,6 +286,18 @@ public class GroupServiceImpl implements GroupService {
         if(res != 1) {
             throw new ApplicationException(GroupErrorCode.UPDATE_GROUP_BASE_INFO_ERROR);
         }
+
+        if(configuration.isDestroyGroupAfterCallback()) {
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.DestroyGroupAfter,
+                    JSONObject.toJSONString(request));
+        }
+
+        DestroyGroupPackage destroyGroupPackage = new DestroyGroupPackage();
+        destroyGroupPackage.setGroupId(request.getGroupId());
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.DESTROY_GROUP, destroyGroupPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
     }
 
@@ -290,6 +327,18 @@ public class GroupServiceImpl implements GroupService {
         updateInfo.setOwnerId(request.getOwnerId());
         groupMapper.update(updateInfo, wrapper);
         groupMemberService.transferGroupMember(request.getOwnerId(), request.getGroupId(), request.getAppId());
+
+        if(configuration.isTransferGroupAfterCallback()) {
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.TransferGroupAfter,
+                    JSONObject.toJSONString(request));
+        }
+
+        TransferGroupPackage transferGroupPackage = new TransferGroupPackage();
+        transferGroupPackage.setGroupId(request.getGroupId());
+        transferGroupPackage.setOwnerId(request.getOwnerId());
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.TRANSFER_GROUP, transferGroupPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
         return Result.success();
     }
 
@@ -324,6 +373,12 @@ public class GroupServiceImpl implements GroupService {
         groupMapper.update(updateGroup, Wrappers.lambdaUpdate(Group.class)
                 .eq(Group::getAppId, request.getAppId())
                 .eq(Group::getGroupId, request.getGroupId()));
+
+        MuteGroupPackage muteGroupPackage = new MuteGroupPackage();
+        muteGroupPackage.setGroupId(request.getGroupId());
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.MUTE_GROUP, muteGroupPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
     }
 

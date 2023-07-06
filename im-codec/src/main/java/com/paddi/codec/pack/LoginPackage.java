@@ -8,6 +8,6 @@ import lombok.Data;
  * @CreatedTime: 2023年07月03日 13:14:47
  */
 @Data
-public class LoginPack {
+public class LoginPackage {
     private String userId;
 }

@@ -1,6 +1,10 @@
 package com.paddi.service.module.friendship.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.codec.pack.friend.AddFriendGroupMemberPackage;
+import com.paddi.codec.pack.friend.DeleteFriendGroupMemberPackage;
+import com.paddi.common.enums.command.FriendshipEventCommand;
+import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.service.module.friendship.entity.po.FriendShipGroup;
 import com.paddi.service.module.friendship.entity.po.FriendShipGroupMember;
@@ -11,6 +15,7 @@ import com.paddi.service.module.friendship.service.FriendShipGroupMemberService;
 import com.paddi.service.module.friendship.service.FriendShipGroupService;
 import com.paddi.service.module.user.entity.po.User;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.utils.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +45,9 @@ public class FriendShipGroupMemberServiceImpl implements FriendShipGroupMemberSe
     @Autowired
     private FriendShipGroupMemberService selfService;
 
+    @Autowired
+    MessageProducer messageProducer;
+
     @Override
     @Transactional
     public Result addGroupNumber(AddFriendShipGroupMemberRequest request) {
@@ -54,6 +62,14 @@ public class FriendShipGroupMemberServiceImpl implements FriendShipGroupMemberSe
                 successId.add(memberId);
             }
         }
+
+        AddFriendGroupMemberPackage addFriendGroupMemberPackage = new AddFriendGroupMemberPackage();
+        addFriendGroupMemberPackage.setFromId(request.getFromId());
+        addFriendGroupMemberPackage.setToIds(request.getToIds());
+        addFriendGroupMemberPackage.setGroupName(request.getGroupName());
+        messageProducer.sendToOtherUserTerminal(request.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_ADD, addFriendGroupMemberPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success(successId);
     }
 
@@ -93,6 +109,14 @@ public class FriendShipGroupMemberServiceImpl implements FriendShipGroupMemberSe
                 }
             }
         }
+
+        DeleteFriendGroupMemberPackage deleteFriendGroupMemberPackage = new DeleteFriendGroupMemberPackage();
+        deleteFriendGroupMemberPackage.setFromId(request.getFromId());
+        deleteFriendGroupMemberPackage.setToIds(request.getToIds());
+        deleteFriendGroupMemberPackage.setGroupName(request.getGroupName());
+        messageProducer.sendToOtherUserTerminal(request.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE, deleteFriendGroupMemberPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success(successId);
     }
 

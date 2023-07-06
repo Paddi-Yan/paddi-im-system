@@ -14,5 +14,7 @@ public class BaseRequest {
 
     private String operator;
 
+    private Integer clientType;
 
+    private String imei;
 }

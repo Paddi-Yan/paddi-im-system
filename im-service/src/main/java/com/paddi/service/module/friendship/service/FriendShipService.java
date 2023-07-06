@@ -1,5 +1,6 @@
 package com.paddi.service.module.friendship.service;
 
+import com.paddi.common.model.BaseRequest;
 import com.paddi.common.model.Result;
 import com.paddi.service.module.friendship.entity.dto.FriendDTO;
 import com.paddi.service.module.friendship.model.req.*;
@@ -16,7 +17,7 @@ public interface FriendShipService {
 
     Result updateFriend(UpdateFriendRequest request);
 
-    Result doAddFriend(String fromId, FriendDTO toItem, Integer appId);
+    Result doAddFriend(BaseRequest baseRequest, String fromId, FriendDTO toItem, Integer appId);
 
     Result deleteFriend(DeleteFriendRequest request);
 

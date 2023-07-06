@@ -18,4 +18,6 @@ public interface GroupMemberMapper extends BaseMapper<GroupMember> {
     List<GroupMemberVO> getGroupMember(@Param("groupId") String groupId, @Param("appId") Integer appId);
 
     List<String> getJoinedGroupIdList(Integer appId, String memberId);
+
+    List<String> getGroupMemberId(@Param("groupId") String groupId, @Param("appId") Integer appId);
 }

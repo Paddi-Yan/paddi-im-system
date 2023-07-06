@@ -1,0 +1,459 @@
+2023-07-05 00:45:32 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-05 17:48:34 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 8932 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 17:48:34 -The following profiles are active: dev
+2023-07-05 17:48:34 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 17:48:34 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 17:48:34 -Starting service [Tomcat]
+2023-07-05 17:48:34 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 17:48:35 -Initializing Spring embedded WebApplicationContext
+2023-07-05 17:48:35 -Root WebApplicationContext: initialization completed in 728 ms
+2023-07-05 17:48:49 -Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'zookeeperManager': Unsatisfied dependency expressed through field 'zkClient'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'zkClient' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.I0Itec.zkclient.ZkClient]: Factory method 'zkClient' threw exception; nested exception is org.I0Itec.zkclient.exception.ZkTimeoutException: Unable to connect to zookeeper server within timeout: 5000
+2023-07-05 17:48:49 -Stopping service [Tomcat]
+2023-07-05 17:48:49 -
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-07-05 17:48:49 -Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'zookeeperManager': Unsatisfied dependency expressed through field 'zkClient'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'zkClient' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.I0Itec.zkclient.ZkClient]: Factory method 'zkClient' threw exception; nested exception is org.I0Itec.zkclient.exception.ZkTimeoutException: Unable to connect to zookeeper server within timeout: 5000
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)
+	at com.paddi.service.ServiceApplication.main(ServiceApplication.java:12)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'zkClient' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.I0Itec.zkclient.ZkClient]: Factory method 'zkClient' threw exception; nested exception is org.I0Itec.zkclient.exception.ZkTimeoutException: Unable to connect to zookeeper server within timeout: 5000
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:655)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:483)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.I0Itec.zkclient.ZkClient]: Factory method 'zkClient' threw exception; nested exception is org.I0Itec.zkclient.exception.ZkTimeoutException: Unable to connect to zookeeper server within timeout: 5000
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:650)
+	... 33 common frames omitted
+Caused by: org.I0Itec.zkclient.exception.ZkTimeoutException: Unable to connect to zookeeper server within timeout: 5000
+	at org.I0Itec.zkclient.ZkClient.connect(ZkClient.java:876)
+	at org.I0Itec.zkclient.ZkClient.<init>(ZkClient.java:98)
+	at org.I0Itec.zkclient.ZkClient.<init>(ZkClient.java:92)
+	at org.I0Itec.zkclient.ZkClient.<init>(ZkClient.java:76)
+	at com.paddi.service.config.BeanConfiguration.zkClient(BeanConfiguration.java:31)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e98a1c94.CGLIB$zkClient$0(<generated>)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e98a1c94$$FastClassBySpringCGLIB$$ca73ebad.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e98a1c94.zkClient(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 34 common frames omitted
+2023-07-05 17:49:14 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 40076 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 17:49:14 -The following profiles are active: dev
+2023-07-05 17:49:15 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 17:49:15 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 17:49:15 -Starting service [Tomcat]
+2023-07-05 17:49:15 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 17:49:15 -Initializing Spring embedded WebApplicationContext
+2023-07-05 17:49:15 -Root WebApplicationContext: initialization completed in 684 ms
+2023-07-05 17:49:21 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-05 17:49:21 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-05 17:49:21 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-05 17:49:21 -Started ServiceApplication in 6.908 seconds (JVM running for 7.576)
+2023-07-05 17:49:34 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-05 17:49:34 -Initializing Servlet 'dispatcherServlet'
+2023-07-05 17:49:34 -Completed initialization in 5 ms
+2023-07-05 17:49:34 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:42 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:45 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:49 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:52 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:55 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:58 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 17:49:59 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:17:16 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:17:20 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 30680 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:17:20 -The following profiles are active: dev
+2023-07-05 18:17:21 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:17:21 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:17:21 -Starting service [Tomcat]
+2023-07-05 18:17:21 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:17:21 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:17:21 -Root WebApplicationContext: initialization completed in 621 ms
+2023-07-05 18:17:26 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:17:26 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:17:26 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-05 18:17:26 -Started ServiceApplication in 6.4 seconds (JVM running for 6.9)
+2023-07-05 18:17:28 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-05 18:17:28 -Initializing Servlet 'dispatcherServlet'
+2023-07-05 18:17:28 -Completed initialization in 4 ms
+2023-07-05 18:17:29 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:17:32 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:17:36 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:17:39 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:17:55 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:17:57 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 40012 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:17:57 -The following profiles are active: dev
+2023-07-05 18:17:58 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:17:58 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:17:58 -Starting service [Tomcat]
+2023-07-05 18:17:58 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:17:58 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:17:58 -Root WebApplicationContext: initialization completed in 581 ms
+2023-07-05 18:18:03 -Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 负载均衡策略配置错误
+2023-07-05 18:18:03 -Stopping service [Tomcat]
+2023-07-05 18:18:03 -
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-07-05 18:18:03 -Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 负载均衡策略配置错误
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)
+	at com.paddi.service.ServiceApplication.main(ServiceApplication.java:12)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 负载均衡策略配置错误
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:655)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:483)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 负载均衡策略配置错误
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:650)
+	... 33 common frames omitted
+Caused by: java.lang.RuntimeException: 负载均衡策略配置错误
+	at com.paddi.common.enums.LoadBalanceStrategyEnum.getStrategy(LoadBalanceStrategyEnum.java:37)
+	at com.paddi.service.config.BeanConfiguration.loadBalance(BeanConfiguration.java:30)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$30facf2c.CGLIB$loadBalance$0(<generated>)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$30facf2c$$FastClassBySpringCGLIB$$f2f6c48f.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$30facf2c.loadBalance(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 34 common frames omitted
+2023-07-05 18:19:05 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 35576 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:19:05 -The following profiles are active: dev
+2023-07-05 18:19:06 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:19:06 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:19:06 -Starting service [Tomcat]
+2023-07-05 18:19:06 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:19:06 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:19:06 -Root WebApplicationContext: initialization completed in 614 ms
+2023-07-05 18:19:11 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:19:11 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:19:11 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-05 18:19:11 -Started ServiceApplication in 6.378 seconds (JVM running for 6.901)
+2023-07-05 18:19:20 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-05 18:19:20 -Initializing Servlet 'dispatcherServlet'
+2023-07-05 18:19:20 -Completed initialization in 6 ms
+2023-07-05 18:19:20 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:19:38 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:19:40 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 30668 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:19:40 -The following profiles are active: dev
+2023-07-05 18:19:41 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:19:41 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:19:41 -Starting service [Tomcat]
+2023-07-05 18:19:41 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:19:41 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:19:41 -Root WebApplicationContext: initialization completed in 640 ms
+2023-07-05 18:19:46 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:19:46 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:19:46 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-05 18:19:46 -Started ServiceApplication in 6.512 seconds (JVM running for 7.049)
+2023-07-05 18:20:27 -Shutting down ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:20:29 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 22764 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:20:29 -The following profiles are active: dev
+2023-07-05 18:20:30 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:20:30 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:20:30 -Starting service [Tomcat]
+2023-07-05 18:20:30 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:20:30 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:20:30 -Root WebApplicationContext: initialization completed in 578 ms
+2023-07-05 18:33:18 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 23616 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:33:18 -The following profiles are active: dev
+2023-07-05 18:33:19 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:33:19 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:33:19 -Starting service [Tomcat]
+2023-07-05 18:33:19 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:33:19 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:33:19 -Root WebApplicationContext: initialization completed in 612 ms
+2023-07-05 18:34:12 -Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+2023-07-05 18:34:13 -Stopping service [Tomcat]
+2023-07-05 18:34:13 -
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-07-05 18:34:13 -Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)
+	at com.paddi.service.ServiceApplication.main(ServiceApplication.java:12)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:655)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:483)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:650)
+	... 33 common frames omitted
+Caused by: java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at java.lang.Class.getMethod(Class.java:1786)
+	at com.paddi.service.config.BeanConfiguration.loadBalance(BeanConfiguration.java:34)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e41612.CGLIB$loadBalance$1(<generated>)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e41612$$FastClassBySpringCGLIB$$649d9b58.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$e41612.loadBalance(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 34 common frames omitted
+2023-07-05 18:34:56 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 26796 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:34:56 -The following profiles are active: dev
+2023-07-05 18:34:57 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:34:57 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:34:57 -Starting service [Tomcat]
+2023-07-05 18:34:57 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:34:57 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:34:57 -Root WebApplicationContext: initialization completed in 595 ms
+2023-07-05 18:35:02 -Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+2023-07-05 18:35:02 -Stopping service [Tomcat]
+2023-07-05 18:35:02 -
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-07-05 18:35:02 -Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)
+	at com.paddi.service.ServiceApplication.main(ServiceApplication.java:12)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:655)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:483)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:650)
+	... 33 common frames omitted
+Caused by: java.lang.NoSuchMethodException: com.paddi.common.loadbalance.consistent.ConsistentHashStrategy.setAlgorithm(com.paddi.common.loadbalance.consistent.ConsistentHashStrategy)
+	at java.lang.Class.getMethod(Class.java:1786)
+	at com.paddi.service.config.BeanConfiguration.loadBalance(BeanConfiguration.java:34)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$35b961e9.CGLIB$loadBalance$0(<generated>)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$35b961e9$$FastClassBySpringCGLIB$$f259a88b.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$35b961e9.loadBalance(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 34 common frames omitted
+2023-07-05 18:36:49 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 14496 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:36:49 -The following profiles are active: dev
+2023-07-05 18:36:50 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:36:50 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:36:50 -Starting service [Tomcat]
+2023-07-05 18:36:50 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:36:50 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:36:50 -Root WebApplicationContext: initialization completed in 611 ms
+2023-07-05 18:37:07 -Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 一致性哈希实现算法配置错误
+2023-07-05 18:37:07 -Stopping service [Tomcat]
+2023-07-05 18:37:07 -
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-07-05 18:37:07 -Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'systemController': Unsatisfied dependency expressed through field 'loadBalance'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 一致性哈希实现算法配置错误
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226)
+	at com.paddi.service.ServiceApplication.main(ServiceApplication.java:12)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'loadBalance' defined in class path resource [com/paddi/service/config/BeanConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 一致性哈希实现算法配置错误
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:655)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:483)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640)
+	... 20 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.paddi.common.loadbalance.LoadBalance]: Factory method 'loadBalance' threw exception; nested exception is java.lang.RuntimeException: 一致性哈希实现算法配置错误
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:650)
+	... 33 common frames omitted
+Caused by: java.lang.RuntimeException: 一致性哈希实现算法配置错误
+	at com.paddi.common.enums.ConsistentHashAlgorithmEnum.getAlgorithm(ConsistentHashAlgorithmEnum.java:32)
+	at com.paddi.service.config.BeanConfiguration.loadBalance(BeanConfiguration.java:35)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$b0186bfd.CGLIB$loadBalance$0(<generated>)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$b0186bfd$$FastClassBySpringCGLIB$$a886e782.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:331)
+	at com.paddi.service.config.BeanConfiguration$$EnhancerBySpringCGLIB$$b0186bfd.loadBalance(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 34 common frames omitted
+2023-07-05 18:38:33 -Starting ServiceApplication on LAPTOP-LBEPBPBH with PID 23876 (E:\IntelliJ-IDEA-WorkPlace\im-system\im-service\target\classes started by 懒羊羊快递员 in E:\IntelliJ-IDEA-WorkPlace\im-system)
+2023-07-05 18:38:33 -The following profiles are active: dev
+2023-07-05 18:38:33 -Tomcat initialized with port(s): 8000 (http)
+2023-07-05 18:38:33 -Initializing ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:38:33 -Starting service [Tomcat]
+2023-07-05 18:38:33 -Starting Servlet engine: [Apache Tomcat/9.0.37]
+2023-07-05 18:38:33 -Initializing Spring embedded WebApplicationContext
+2023-07-05 18:38:33 -Root WebApplicationContext: initialization completed in 582 ms
+2023-07-05 18:38:39 -Initializing ExecutorService 'applicationTaskExecutor'
+2023-07-05 18:38:39 -Starting ProtocolHandler ["http-nio-8000"]
+2023-07-05 18:38:39 -Tomcat started on port(s): 8000 (http) with context path ''
+2023-07-05 18:38:39 -Started ServiceApplication in 6.387 seconds (JVM running for 6.884)
+2023-07-05 18:38:47 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-07-05 18:38:47 -Initializing Servlet 'dispatcherServlet'
+2023-07-05 18:38:47 -Completed initialization in 5 ms
+2023-07-05 18:38:47 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:53 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:54 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:54 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:55 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:55 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 18:38:56 -query all websocket server node = [["192.168.18.113:19000","192.168.50.177:19000","192.168.18.113:19001","10.73.139.134:19000"]] successfully
+2023-07-05 19:06:39 -Shutting down ExecutorService 'applicationTaskExecutor'

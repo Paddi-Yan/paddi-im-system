@@ -2,23 +2,33 @@ package com.paddi.service.module.group.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
+import com.paddi.codec.pack.group.AddGroupMemberPackage;
+import com.paddi.codec.pack.group.RemoveGroupMemberPackage;
+import com.paddi.codec.pack.group.UpdateGroupMemberPackage;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.GroupErrorCode;
 import com.paddi.common.enums.GroupMemberRoleEnum;
 import com.paddi.common.enums.GroupStatusEnum;
 import com.paddi.common.enums.GroupTypeEnum;
+import com.paddi.common.enums.command.GroupEventCommand;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.exception.BadRequestException;
+import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.PageParam;
 import com.paddi.common.model.Result;
 import com.paddi.common.utils.PageUtils;
+import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.group.entity.dto.GroupMemberDTO;
 import com.paddi.service.module.group.entity.po.Group;
 import com.paddi.service.module.group.entity.po.GroupMember;
 import com.paddi.service.module.group.entity.vo.GroupMemberVO;
 import com.paddi.service.module.group.mapper.GroupMemberMapper;
+import com.paddi.service.module.group.model.callback.AddGroupMemberCallbackRequest;
 import com.paddi.service.module.group.model.req.*;
 import com.paddi.service.module.group.model.resp.AddGroupMemberResponse;
 import com.paddi.service.module.group.model.resp.GetMemberRoleResponse;
@@ -27,6 +37,9 @@ import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.group.service.GroupService;
 import com.paddi.service.module.user.entity.po.User;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.utils.CallbackService;
+import com.paddi.service.utils.GroupMessageProducer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +54,7 @@ import java.util.stream.Collectors;
  * @CreatedTime: 2023年07月02日 14:08:46
  */
 @Service
+@Slf4j
 public class GroupMemberServiceImpl implements GroupMemberService {
 
     @Autowired
@@ -55,6 +69,15 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ApplicationConfiguration configuration;
+
+    @Autowired
+    private CallbackService callbackService;
+
+    @Autowired
+    private GroupMessageProducer groupMessageProducer;
+
     @Override
     public Result importGroupMember(ImportGroupMemberRequest request) {
         List<ImportGroupMemberResponse> responses = new ArrayList<>();
@@ -62,7 +85,23 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         if(!groupQueryResult.isSuccess()) {
             return groupQueryResult;
         }
-        for(GroupMemberDTO member : request.getMembers()) {
+        List<GroupMemberDTO> members = request.getMembers();
+
+        if(configuration.isAddGroupMemberBeforeCallback()) {
+            Result result = callbackService.callbackSync(request.getAppId(),
+                    Constants.CallbackCommand.GroupMemberAddBefore,
+                    JSONObject.toJSONString(request));
+            if(!result.isSuccess()) {
+                return result;
+            }
+            try {
+                members = JSONArray.parseArray(JSONObject.toJSONString(result.getData()), GroupMemberDTO.class);
+            } catch(Exception e) {
+                log.error("添加群成员[{}]回调失败, error=[{}]", request, e.getMessage());
+            }
+        }
+
+        for(GroupMemberDTO member : members) {
             Result result = selfService.doAddGroupMember(request.getGroupId(), request.getAppId(), member);
             ImportGroupMemberResponse response = new ImportGroupMemberResponse();
             response.setMemberId(member.getMemberId());
@@ -75,6 +114,26 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             }
             responses.add(response);
         }
+
+        if(configuration.isAddGroupMemberAfterCallback()) {
+            AddGroupMemberCallbackRequest callbackRequest = new AddGroupMemberCallbackRequest();
+            callbackRequest.setGroupId(request.getGroupId());
+            callbackRequest.setOperator(request.getOperator());
+            callbackRequest.setGroupType(groupQueryResult.getData().getGroupType());
+            callbackRequest.setMembers(members);
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.GroupMemberAddAfter,
+                    JSONObject.toJSONString(callbackRequest));
+        }
+
+        List<String> memberIdList = responses.stream()
+                                       .map(ImportGroupMemberResponse :: getMemberId)
+                                       .collect(Collectors.toList());
+        AddGroupMemberPackage addGroupMemberPackage = new AddGroupMemberPackage();
+        addGroupMemberPackage.setGroupId(request.getGroupId());
+        addGroupMemberPackage.setMembers(memberIdList);
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.ADDED_MEMBER, addGroupMemberPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
         return Result.success(responses);
     }
 
@@ -184,7 +243,6 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 .eq(GroupMember::getAppId, appId)
                 .eq(GroupMember::getGroupId, groupId)
                 .eq(GroupMember::getMemberId, ownerId));
-
         return Result.success();
     }
 
@@ -207,6 +265,20 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         if(!isAdmin && GroupTypeEnum.PUBLIC.getCode() == group.getGroupType()) {
             throw new ApplicationException(GroupErrorCode.THIS_OPERATE_NEED_APPMANAGER_ROLE);
         }
+        if(configuration.isAddGroupMemberBeforeCallback()) {
+            Result result = callbackService.callbackSync(request.getAppId(),
+                    Constants.CallbackCommand.GroupMemberAddBefore,
+                    JSONObject.toJSONString(request));
+            if(!result.isSuccess()) {
+                return result;
+            }
+            try {
+                members = JSONArray.parseArray(JSONObject.toJSONString(result.getData()), GroupMemberDTO.class);
+            } catch(Exception e) {
+                log.error("添加群成员[{}]回调失败, error=[{}]", request, e.getMessage());
+            }
+        }
+
         for(GroupMemberDTO member : members) {
             Result result = selfService.doAddGroupMember(request.getGroupId(), request.getAppId(), member);
             AddGroupMemberResponse response = new AddGroupMemberResponse();
@@ -222,6 +294,25 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             }
             responses.add(response);
         }
+        if(configuration.isAddGroupMemberAfterCallback()) {
+            AddGroupMemberCallbackRequest callbackRequest = new AddGroupMemberCallbackRequest();
+            callbackRequest.setGroupId(request.getGroupId());
+            callbackRequest.setOperator(request.getOperator());
+            callbackRequest.setGroupType(group.getGroupType());
+            callbackRequest.setMembers(members);
+            callbackService.callbackAsync(request.getAppId(),
+                    Constants.CallbackCommand.GroupMemberAddAfter,
+                    JSONObject.toJSONString(callbackRequest));
+        }
+
+        List<String> memberIdList = responses.stream()
+                                        .map(AddGroupMemberResponse :: getMemberId)
+                                        .collect(Collectors.toList());
+        AddGroupMemberPackage addGroupMemberPackage = new AddGroupMemberPackage();
+        addGroupMemberPackage.setGroupId(request.getGroupId());
+        addGroupMemberPackage.setMembers(memberIdList);
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.ADDED_MEMBER, addGroupMemberPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
         return Result.success(responses);
     }
 
@@ -272,8 +363,21 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 }
             }
         }
-        selfService.doRemoveGroupMember(request.getGroupId(), request.getAppId(), request.getMemberId());
-        return null;
+        Result result = selfService.doRemoveGroupMember(request.getGroupId(), request.getAppId(), request.getMemberId());
+        if(result.isSuccess()) {
+            if(configuration.isDeleteGroupMemberAfterCallback()) {
+                callbackService.callbackAsync(request.getAppId(),
+                        Constants.CallbackCommand.GroupMemberDeleteAfter,
+                        JSONObject.toJSONString(request));
+            }
+
+            RemoveGroupMemberPackage removeGroupMemberPackage = new RemoveGroupMemberPackage();
+            removeGroupMemberPackage.setGroupId(request.getGroupId());
+            removeGroupMemberPackage.setMember(request.getMemberId());
+            groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.DELETED_MEMBER, removeGroupMemberPackage,
+                    new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+        }
+        return Result.success();
     }
 
     @Override
@@ -355,6 +459,31 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 .eq(GroupMember::getAppId, request.getAppId())
                 .eq(GroupMember::getMemberId, request.getMemberId())
                 .eq(GroupMember::getGroupId, request.getGroupId()));
+
+        UpdateGroupMemberPackage updateGroupMemberPackage = new UpdateGroupMemberPackage();
+        BeanUtils.copyProperties(request, updateGroupMemberPackage);
+        groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.UPDATED_GROUP, updateGroupMemberPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
+    }
+
+    @Override
+    public List<String> getGroupMemberId(String groupId, Integer appId) {
+        return groupMemberMapper.getGroupMemberId(groupId, appId);
+    }
+
+    @Override
+    public List<GroupMemberVO> getGroupManager(String groupId, Integer appId) {
+        List<GroupMember> managers = groupMemberMapper.selectList(Wrappers.lambdaQuery(GroupMember.class)
+                                                                              .eq(GroupMember :: getAppId, appId)
+                                                                              .eq(GroupMember :: getGroupId, groupId)
+                                                                              .in(GroupMember :: getRole, Arrays.asList(GroupMemberRoleEnum.MAMAGER.getCode(), GroupMemberRoleEnum.OWNER.getCode())));
+        List<GroupMemberVO> result = managers.stream().map(manager -> {
+            GroupMemberVO groupMemberVO = new GroupMemberVO();
+            BeanUtils.copyProperties(manager, groupMemberVO);
+            return groupMemberVO;
+        }).collect(Collectors.toList());
+        return result;
     }
 }

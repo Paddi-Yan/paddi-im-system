@@ -15,6 +15,7 @@ public class UserSession {
 
     private Integer clientType;
 
+    private String imei;
     /**
      * SDK Version
      */

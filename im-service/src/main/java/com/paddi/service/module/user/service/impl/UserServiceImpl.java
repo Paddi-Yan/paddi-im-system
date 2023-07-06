@@ -2,9 +2,11 @@ package com.paddi.service.module.user.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.codec.pack.user.UserModifyPackage;
 import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.DelFlagEnum;
 import com.paddi.common.enums.UserErrorCode;
+import com.paddi.common.enums.command.UserEventCommand;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.model.Result;
 import com.paddi.service.config.ApplicationConfiguration;
@@ -18,6 +20,7 @@ import com.paddi.service.module.user.model.resp.GetUserInfoResponse;
 import com.paddi.service.module.user.model.resp.ImportUserResponse;
 import com.paddi.service.module.user.service.UserService;
 import com.paddi.service.utils.CallbackService;
+import com.paddi.service.utils.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CallbackService callbackService;
+
+    @Autowired
+    private MessageProducer messageProducer;
 
     @Override
     public Result importUser(ImportUserRequest importUserRequest) {
@@ -148,7 +154,14 @@ public class UserServiceImpl implements UserService {
                                                                .eq(User :: getUserId, request.getUserId())
                                                                .eq(User :: getDelFlag, DelFlagEnum.NORMAL.getCode()));
         if(update == 1) {
-            if(configuration.getModifyUserAfterCallback()) {
+
+            UserModifyPackage userModifyPackage = new UserModifyPackage();
+            BeanUtils.copyProperties(request, userModifyPackage);
+            messageProducer.sendToUser(request.getUserId(), request.getAppId(),
+                    request.getClientType(), request.getImei(),
+                    UserEventCommand.USER_MODIFY, userModifyPackage);
+
+            if(configuration.isModifyUserAfterCallback()) {
                 callbackService.callbackAsync(request.getAppId(),
                         Constants.CallbackCommand.ModifyUserAfter,
                         JSONObject.toJSONString(request));

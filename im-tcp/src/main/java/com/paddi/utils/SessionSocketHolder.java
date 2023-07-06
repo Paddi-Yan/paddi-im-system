@@ -3,7 +3,7 @@ package com.paddi.utils;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.paddi.common.enums.ImConnectStatusEnum;
+import com.paddi.common.enums.ConnectionStatusEnum;
 import com.paddi.common.model.UserClientDTO;
 import com.paddi.common.model.UserSession;
 import com.paddi.redis.RedisManager;
@@ -92,7 +92,7 @@ public class SessionSocketHolder {
         String sessionStr = map.get(String.valueOf(clientType));
         if(StrUtil.isNotEmpty(sessionStr)) {
             UserSession userSession = JSONObject.parseObject(sessionStr, UserSession.class);
-            userSession.setConnectionState(ImConnectStatusEnum.OFFLINE_STATUS.getCode());
+            userSession.setConnectionState(ConnectionStatusEnum.OFFLINE_STATUS.getCode());
             map.put(clientType.toString() + ":" + imei, JSON.toJSONString(userSession));
         }
     }

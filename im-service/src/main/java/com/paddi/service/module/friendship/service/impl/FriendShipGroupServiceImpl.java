@@ -3,8 +3,12 @@ package com.paddi.service.module.friendship.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.paddi.codec.pack.friend.AddFriendGroupPackage;
+import com.paddi.codec.pack.friend.DeleteFriendGroupPackage;
 import com.paddi.common.enums.DelFlagEnum;
 import com.paddi.common.enums.FriendShipErrorCode;
+import com.paddi.common.enums.command.FriendshipEventCommand;
+import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.service.module.friendship.entity.po.FriendShipGroup;
 import com.paddi.service.module.friendship.mapper.FriendShipGroupMapper;
@@ -14,6 +18,7 @@ import com.paddi.service.module.friendship.model.req.DeleteFriendShipGroupReques
 import com.paddi.service.module.friendship.service.FriendShipGroupMemberService;
 import com.paddi.service.module.friendship.service.FriendShipGroupService;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.utils.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -37,6 +42,9 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MessageProducer messageProducer;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,6 +82,13 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
             log.error(e.getMessage());
             return Result.error(FriendShipErrorCode.FRIEND_SHIP_GROUP_IS_EXIST);
         }
+
+        AddFriendGroupPackage addFriendGroupPackage = new AddFriendGroupPackage();
+        addFriendGroupPackage.setFromId(request.fromId);
+        addFriendGroupPackage.setGroupName(request.getGroupName());
+        messageProducer.sendToOtherUserTerminal(request.fromId, FriendshipEventCommand.FRIEND_GROUP_ADD, addFriendGroupPackage,
+                new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
         return Result.success();
     }
 
@@ -106,6 +121,13 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
                 deleteInfo.setDelFlag(DelFlagEnum.DELETE.getCode());
                 friendShipGroupMapper.updateById(deleteInfo);
                 friendShipGroupMemberService.clearGroupMember(friendShipGroup.getGroupId());
+
+                DeleteFriendGroupPackage deleteFriendGroupPackage = new DeleteFriendGroupPackage();
+                deleteFriendGroupPackage.setFromId(request.getFromId());
+                deleteFriendGroupPackage.setGroupName(groupName);
+                messageProducer.sendToOtherUserTerminal(request.getFromId(), FriendshipEventCommand.FRIEND_GROUP_DELETE, deleteFriendGroupPackage,
+                        new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
+
             }
         }
         return Result.success();

@@ -1,6 +1,9 @@
 package com.paddi.server;
 
+import com.paddi.codec.WebSocketMessageDecoder;
+import com.paddi.codec.WebSocketMessageEncoder;
 import com.paddi.config.BootstrapConfig;
+import com.paddi.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -56,7 +59,10 @@ public class NettyWebSocketServer {
                        * 会帮你处理握手动作： handshaking（close, ping, pong） ping + pong = 心跳
                        * 对于websocket来讲，都是以frames进行传输的，不同的数据类型对应的frames也不同
                        */
+                      pipeline.addLast(new WebSocketMessageDecoder());
+                      pipeline.addLast(new WebSocketMessageEncoder());
                       pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+                      pipeline.addLast(new NettyServerHandler(config.getBrokerId()));
                   }
               });
     }

@@ -1,6 +1,6 @@
 package com.paddi.codec.pack.user;
 
-import com.lld.im.common.model.UserSession;
+import com.paddi.common.model.UserSession;
 import lombok.Data;
 
 import java.util.List;

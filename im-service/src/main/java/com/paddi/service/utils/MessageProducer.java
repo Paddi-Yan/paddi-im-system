@@ -3,6 +3,7 @@ package com.paddi.service.utils;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.paddi.codec.protocol.MessagePackage;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.command.Command;
 import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.UserSession;
@@ -33,13 +34,15 @@ public class MessageProducer {
     @Autowired
     private UserSessionUtils sessionUtils;
 
-    private Boolean sendMessage(UserSession userSession, Object message){
+    private static final String TOPIC = Constants.RocketMQConstants.MessageService2Im + "-";
+
+    private Boolean sendMessage(UserSession userSession, Object payload){
         try {
-            log.info("send message = [{}]", message);
-            rocketMQTemplate.convertAndSend("" + userSession.getBrokerId(), message);
+            log.info("send message = [{}]", payload);
+            rocketMQTemplate.convertAndSend(TOPIC + userSession.getBrokerId(), payload);
             return true;
         }catch(Exception e) {
-            log.error("send message {} error {}", message, e.getMessage());
+            log.error("send message {} error {}", payload, e.getMessage());
             return false;
         }
     }

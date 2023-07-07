@@ -41,7 +41,7 @@ public class ServerStarter {
             RedisManager.init(bootstrapConfig.getServer().getRedis());
             startMessageListener(bootstrapConfig);
             RocketMQFactory.init(bootstrapConfig.getServer().getRocketmq());
-            MessageListener.init(bootstrapConfig.getServer().getBrokerId());
+            MessageListener.init(bootstrapConfig.getServer());
             registerToZookeeper(bootstrapConfig.getServer());
         } catch(Exception e) {
             e.printStackTrace();

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  **/
 @Data
 @NoArgsConstructor
-public class RecallMessageNotifyPack {
+public class RecallMessageNotifyPackage {
 
     private String fromId;
 

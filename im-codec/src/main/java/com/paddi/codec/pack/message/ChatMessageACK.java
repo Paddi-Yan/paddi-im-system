@@ -8,16 +8,16 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class ChatMessageAck {
+public class ChatMessageACK {
 
     private String messageId;
     private Long messageSequence;
 
-    public ChatMessageAck(String messageId) {
+    public ChatMessageACK(String messageId) {
         this.messageId = messageId;
     }
 
-    public ChatMessageAck(String messageId,Long messageSequence) {
+    public ChatMessageACK(String messageId, Long messageSequence) {
         this.messageId = messageId;
         this.messageSequence = messageSequence;
     }

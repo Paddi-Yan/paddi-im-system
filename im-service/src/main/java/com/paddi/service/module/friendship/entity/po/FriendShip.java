@@ -41,6 +41,4 @@ public class FriendShip {
     private String addSource;
 
     private String extra;
-
-    private String addWording;
 }

@@ -6,6 +6,7 @@ public enum BaseErrorCode implements ApplicationExceptionEnum {
     SUCCESS(200,"success"),
     SYSTEM_ERROR(90000,"服务器内部错误,请联系管理员"),
     PARAMETER_ERROR(90001,"参数校验错误"),
+    NOT_EXIT_APPID(90002, "不存在的APPID")
 
 
             ;

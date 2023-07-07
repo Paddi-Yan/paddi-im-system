@@ -8,15 +8,15 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class MessageReadedPack {
+public class MessageReciveServerACKPackage {
 
-    private long messageSequence;
+    private Long messageKey;
 
     private String fromId;
 
-    private String groupId;
-
     private String toId;
 
-    private Integer conversationType;
+    private Long messageSequence;
+
+    private Boolean serverSend;
 }

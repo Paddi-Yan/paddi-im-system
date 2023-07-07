@@ -117,12 +117,6 @@
                 <version>${springboot.version}</version>
             </dependency>
 
-            <!-- RocketMQ -->
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-client</artifactId>
-                <version>4.4.0</version>
-            </dependency>
 
             <!-- mybatis plus -->
             <dependency>

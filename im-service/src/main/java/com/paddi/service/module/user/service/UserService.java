@@ -1,6 +1,7 @@
 package com.paddi.service.module.user.service;
 
 import com.paddi.common.model.Result;
+import com.paddi.service.module.user.entity.po.User;
 import com.paddi.service.module.user.model.req.DeleteUserRequest;
 import com.paddi.service.module.user.model.req.GetUserInfoRequest;
 import com.paddi.service.module.user.model.req.ImportUserRequest;
@@ -19,7 +20,7 @@ public interface UserService {
 
     Result getUserInfo(GetUserInfoRequest request);
 
-    Result getSingleUserInfo(String userId, Integer appId);
+    Result<User> getSingleUserInfo(String userId, Integer appId);
 
     Result modifyUserInfo(ModifyUserInfoRequest request);
 }

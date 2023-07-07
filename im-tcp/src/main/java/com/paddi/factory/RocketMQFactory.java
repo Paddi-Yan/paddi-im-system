@@ -2,9 +2,11 @@ package com.paddi.factory;
 
 import com.paddi.config.BootstrapConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Paddi-Yan
@@ -14,35 +16,27 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 @Slf4j
 public class RocketMQFactory {
 
-    private static DefaultMQProducer producer;
+    private static Map<String, DefaultMQProducer> producerMap = new ConcurrentHashMap<>();
 
     private static BootstrapConfig.RocketMQConfig config;
 
     public static void init(BootstrapConfig.RocketMQConfig rocketMQConfig) {
         config = rocketMQConfig;
-        producer = createDefaultMQProducer(rocketMQConfig);
+    }
+
+    public static DefaultMQProducer getProducer(String topic) {
+        return producerMap.computeIfAbsent(topic, v -> createDefaultMQProducer());
+    }
+
+    private static DefaultMQProducer createDefaultMQProducer() {
+        DefaultMQProducer producer = new DefaultMQProducer();
+        producer.setNamesrvAddr(config.getNamesrvAddr());
+        producer.setProducerGroup(config.getProducerGroup());
         try {
             producer.start();
         } catch(MQClientException e) {
-            log.error("Producer init error: {}", e.getErrorMessage());
+            log.error(e.getErrorMessage());
         }
-    }
-
-    public static DefaultMQProducer getProducer() {
-        return producer;
-    }
-
-    public static DefaultMQPushConsumer getConsumer() {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer();
-        consumer.setNamesrvAddr(config.getNamesrvAddr());
-        return consumer;
-    }
-
-
-    private static DefaultMQProducer createDefaultMQProducer(BootstrapConfig.RocketMQConfig rocketMQConfig) {
-        DefaultMQProducer producer = new DefaultMQProducer();
-        producer.setNamesrvAddr(rocketMQConfig.getNamesrvAddr());
-        producer.setProducerGroup(rocketMQConfig.getProducerGroup());
         return producer;
     }
 

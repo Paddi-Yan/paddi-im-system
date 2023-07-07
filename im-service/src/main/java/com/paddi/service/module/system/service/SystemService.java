@@ -1,6 +1,7 @@
 package com.paddi.service.module.system.service;
 
 import com.paddi.common.model.Result;
+import com.paddi.service.module.system.entity.po.AppSignRecord;
 import com.paddi.service.module.system.model.req.LoginRequest;
 
 /**
@@ -10,4 +11,8 @@ import com.paddi.service.module.system.model.req.LoginRequest;
  */
 public interface SystemService {
     Result authenticate(LoginRequest request);
+
+    AppSignRecord getAppSignRecord(Integer appId);
+
+    String getSignature(Integer appId, String userId);
 }

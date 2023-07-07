@@ -8,11 +8,7 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class UserCustomStatusChangeNotifyPack {
-
-    private String customText;
-
-    private Integer customStatus;
+public class LoginACKPackage {
 
     private String userId;
 

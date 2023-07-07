@@ -11,7 +11,7 @@ import java.util.List;
  * @version: 1.0
  */
 @Data
-public class UserStatusChangeNotifyPack {
+public class UserStatusChangeNotifyPackage {
 
     private Integer appId;
 

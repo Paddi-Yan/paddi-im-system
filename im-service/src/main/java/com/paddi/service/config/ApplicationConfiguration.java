@@ -64,4 +64,8 @@ public class ApplicationConfiguration {
     private Integer deleteConversationSyncMode;
 
     private Integer offlineMessageCount;//离线消息最大条数
+
+    private boolean sendMessageCheckFriend; //发送消息是否校验关系链
+
+    private boolean sendMessageCheckBlack; //发送消息是否校验黑名单
 }

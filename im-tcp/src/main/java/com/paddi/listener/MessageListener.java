@@ -3,8 +3,8 @@ package com.paddi.listener;
 import com.alibaba.fastjson.JSONObject;
 import com.paddi.codec.protocol.MessagePackage;
 import com.paddi.common.constants.Constants;
+import com.paddi.config.BootstrapConfig;
 import com.paddi.factory.ProcessorFactory;
-import com.paddi.factory.RocketMQFactory;
 import com.paddi.processor.AbstractProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -22,17 +22,17 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 @Slf4j
 public class MessageListener {
 
-    private static void startListenMessage(Integer brokerId) {
+    private static void startListenMessage(Integer brokerId, String namesrvAddr) {
         try {
-            DefaultMQPushConsumer consumer = RocketMQFactory.getConsumer();
-                consumer.setConsumerGroup("im-server-consumer");
-                consumer.subscribe(Constants.RocketMQConstants.MessageService2Im + "-" + brokerId, "*");
-                consumer.setMessageModel(MessageModel.CLUSTERING);
-                consumer.registerMessageListener((MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer();
+            consumer.setNamesrvAddr(namesrvAddr);
+            consumer.setConsumerGroup("im-server-consumer");
+            consumer.subscribe(Constants.RocketMQConstants.MessageService2Im + "-" + brokerId, "*");
+            consumer.setMessageModel(MessageModel.CLUSTERING);
+            consumer.registerMessageListener((MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
                 for(MessageExt messageExt : list) {
                     try {
                         String message = new String(messageExt.getBody());
-                        log.info("receive message:{}", messageExt);
                         log.info("detail message content: {}", message);
                         MessagePackage messagePackage = JSONObject.parseObject(message, MessagePackage.class);
                         AbstractProcessor processor = ProcessorFactory.getMessageProcessor(messagePackage.getCommand());
@@ -50,8 +50,8 @@ public class MessageListener {
         }
     }
 
-    public static void init(Integer brokerId) {
-        startListenMessage(brokerId);
+    public static void init(BootstrapConfig.TcpConfig config) {
+        startListenMessage(config.getBrokerId(), config.getRocketmq().getNamesrvAddr());
     }
 
 }

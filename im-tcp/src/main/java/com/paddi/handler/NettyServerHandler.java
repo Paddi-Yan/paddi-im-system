@@ -10,6 +10,7 @@ import com.paddi.common.enums.ConnectionStatusEnum;
 import com.paddi.common.enums.command.SystemCommand;
 import com.paddi.common.model.UserClientDTO;
 import com.paddi.common.model.UserSession;
+import com.paddi.publish.MessageProducer;
 import com.paddi.redis.RedisManager;
 import com.paddi.utils.SessionSocketHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -99,6 +100,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         } else if(command == SystemCommand.PING.getCommand()) {
             //设置最后一次心跳包的接收时间
             ctx.channel().attr(AttributeKey.valueOf(READ_TIME)).set(System.currentTimeMillis());
+        }else {
+            MessageProducer.sendMessage(message, command);
         }
     }
 }

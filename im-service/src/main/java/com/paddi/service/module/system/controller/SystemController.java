@@ -1,4 +1,4 @@
-package com.paddi.service.module.system;
+package com.paddi.service.module.system.controller;
 
 import com.paddi.common.enums.ClientType;
 import com.paddi.common.loadbalance.LoadBalance;
@@ -9,10 +9,7 @@ import com.paddi.service.module.system.model.req.LoginRequest;
 import com.paddi.service.module.system.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +19,7 @@ import java.util.List;
  * @CreatedTime: 2023年07月04日 22:16:14
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/v1/system")
 public class SystemController {
 
     @Autowired
@@ -50,6 +47,11 @@ public class SystemController {
             return Result.success(RouteInfoParseUtil.parse(address));
         }
         return Result.error();
+    }
+
+    @GetMapping("/signature")
+    public Result getSignature(@RequestParam Integer appId, @RequestParam String userId) {
+        return Result.success(systemService.getSignature(appId, userId));
     }
 
 }

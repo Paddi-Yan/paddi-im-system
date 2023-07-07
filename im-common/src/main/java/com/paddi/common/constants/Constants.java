@@ -15,6 +15,7 @@ public class Constants {
 
     public static final String CLIENT_TYPE = "clientType";
 
+    public static final String COMMAND = "command";
     public static final String IMEI = "imei";
 
     /** channel绑定的clientType 和 imei Key*/
@@ -28,13 +29,19 @@ public class Constants {
 
     public static final String IM_CORE_ZKROOT_WEBSOCKET = "/websocket";
 
+    public static class UserSignConstants{
+        public static final String TLS_APPID = "TLS.appId";
+        public static final String TLS_IDENTIFIER = "TLS.identifier";
+        public static final String TLS_EXPIRE = "TLS.expire";
+        public static final String TLS_SIGN_TIME = "TLS.signTime";
+    }
 
     public static class RedisConstants{
 
         /**
-         * userSign，格式：appId:userSign:
+         * userSign，格式：appId:userSign:identifier:userSign
          */
-        public static final String USER_SIGN = "user-sign";
+        public static final String USER_SIGN = ":user-sign:";
 
         /**
          * 用户上线通知channel
@@ -91,6 +98,7 @@ public class Constants {
 
         public static final String StoreGroupMessage = "storeGroupMessage";
 
+        public static final String MESSAGE_SERVICE_GROUP = "ChatMessage";
 
     }
 

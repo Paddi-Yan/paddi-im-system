@@ -1,4 +1,4 @@
-package com.paddi.service.module.message.model;
+package com.paddi.common.model.message;
 
 import com.paddi.common.model.ClientInfo;
 import lombok.Data;
@@ -16,5 +16,13 @@ public class MessageContent extends ClientInfo {
 
     private String toId;
 
-    private String payload;
+    private String messageBody;
+
+    private Long messageTime;
+
+    private String extra;
+
+    private Long messageKey;
+
+    private long messageSequence;
 }

@@ -4,6 +4,7 @@ import com.paddi.common.enums.ConsistentHashAlgorithmEnum;
 import com.paddi.common.enums.LoadBalanceStrategyEnum;
 import com.paddi.common.loadbalance.LoadBalance;
 import com.paddi.common.loadbalance.consistent.AbstractConsistentHashAlgorithm;
+import com.paddi.service.utils.SnowflakeIdWorker;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,4 +44,15 @@ public class BeanConfiguration {
     public ZkClient zkClient() {
         return new ZkClient(applicationConfiguration.getZkServers(), applicationConfiguration.getConnectionTimeout());
     }
+
+    @Bean
+    public EasySQLInjector easySQLInjector() {
+        return new EasySQLInjector();
+    }
+
+    @Bean
+    public SnowflakeIdWorker buildSnowflakeSeq() throws Exception {
+        return new SnowflakeIdWorker(0);
+    }
+
 }

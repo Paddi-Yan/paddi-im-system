@@ -4,13 +4,19 @@ import com.paddi.codec.pack.message.ChatMessageACK;
 import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
-import com.paddi.service.module.message.model.MessageContent;
+import com.paddi.common.model.message.MessageContent;
 import com.paddi.service.module.message.service.CheckSendMessageService;
+import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.module.message.service.P2PMessageService;
 import com.paddi.service.utils.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: Paddi-Yan
@@ -27,6 +33,19 @@ public class P2PMessageServiceImpl implements P2PMessageService {
     @Autowired
     private MessageProducer messageProducer;
 
+    @Autowired
+    private MessageStoreService messageStoreService;
+
+    private final ThreadPoolExecutor threadPoolExecutor;{
+        AtomicInteger counter = new AtomicInteger(0);
+        threadPoolExecutor = new ThreadPoolExecutor(8, 8, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(1024), factory -> {
+            Thread thread = new Thread();
+            thread.setName("message-process-thread-" + counter.decrementAndGet());
+            thread.setDaemon(true);
+            return thread;
+        });
+    }
+
     @Override
     public void process(MessageContent messageContent) {
         String fromId = messageContent.getFromId();
@@ -37,12 +56,16 @@ public class P2PMessageServiceImpl implements P2PMessageService {
         //发送方和接收方是否是好友
         Result result = processBefore(fromId, toId, appId);
         if(result.isSuccess()) {
-            //回复ACK给发送方
-            sendACK(messageContent, result);
-            //同步给发送方的其他在线端
-            syncToSender(messageContent, new ClientInfo(appId, messageContent.getClientType(), messageContent.getImei()));
-            //发送给对方在线端
-            dispatchMessage(messageContent);
+            threadPoolExecutor.execute(() -> {
+                //数据持久化
+                messageStoreService.storeMessage(messageContent);
+                //回复ACK给发送方
+                sendACK(messageContent, result);
+                //同步给发送方的其他在线端
+                syncToSender(messageContent, new ClientInfo(appId, messageContent.getClientType(), messageContent.getImei()));
+                //发送给对方在线端
+                dispatchMessage(messageContent);
+            });
         }else {
             //回复ACK给发送方,通知发送失败
             sendACK(messageContent, result);

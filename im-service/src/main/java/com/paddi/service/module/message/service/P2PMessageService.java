@@ -1,6 +1,6 @@
 package com.paddi.service.module.message.service;
 
-import com.paddi.service.module.message.model.MessageContent;
+import com.paddi.common.model.message.MessageContent;
 
 /**
  * @Author: Paddi-Yan

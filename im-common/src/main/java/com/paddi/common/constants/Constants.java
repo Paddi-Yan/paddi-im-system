@@ -99,6 +99,7 @@ public class Constants {
         public static final String StoreGroupMessage = "storeGroupMessage";
 
         public static final String MESSAGE_SERVICE_GROUP = "ChatMessage";
+        public static final String GROUP_MESSAGE_SERVICE_GROUP = "GroupChatMessage";
 
     }
 

@@ -13,4 +13,8 @@ public interface MessageStoreService {
     void storeMessage(MessageContent messageContent);
 
     void storeGroupMessage(GroupChatMessageContent groupChatMessageContent);
+
+    <T> void setMessageToCache(MessageContent messageContent);
+
+    <T> T getMessageFromCache(Integer appId, String messageId, Class<T> clazz);
 }

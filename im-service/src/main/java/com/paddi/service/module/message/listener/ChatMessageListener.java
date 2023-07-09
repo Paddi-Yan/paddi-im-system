@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.model.message.MessageContent;
+import com.paddi.common.model.message.MessageReceiveACKContent;
+import com.paddi.service.module.message.service.MessageSyncService;
 import com.paddi.service.module.message.service.P2PMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -30,6 +32,9 @@ public class ChatMessageListener implements RocketMQListener<String> {
     @Autowired
     private P2PMessageService p2pMessageService;
 
+    @Autowired
+    private MessageSyncService messageSyncService;
+
 
     @Override
     public void onMessage(String message) {
@@ -39,6 +44,9 @@ public class ChatMessageListener implements RocketMQListener<String> {
         if(command.equals(MessageCommand.MSG_P2P.getCommand())) {
             MessageContent messageContent = obj.toJavaObject(MessageContent.class);
             p2pMessageService.process(messageContent);
+        } else if(command.equals(MessageCommand.MSG_RECEIVE_ACK.getCommand())) {
+            MessageReceiveACKContent messageReceiveACKContent = obj.toJavaObject(MessageReceiveACKContent.class);
+            messageSyncService.messageReceiveNotify(messageReceiveACKContent);
         }
     }
 }

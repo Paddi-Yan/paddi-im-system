@@ -3,20 +3,15 @@ package com.paddi.codec.pack.message;
 import lombok.Data;
 
 /**
- * @description:
- * @author: lld
- * @version: 1.0
+ * @Author: Paddi-Yan
+ * @Project: im-system
+ * @CreatedTime: 2023年07月09日 18:24:35
  */
 @Data
-public class MessageReciveServerACKPackage {
-
+public class MessageReceiveServerACKPackage {
     private Long messageKey;
-
     private String fromId;
-
     private String toId;
-
     private Long messageSequence;
-
-    private Boolean serverSend;
+    private Boolean sendFromServer;
 }

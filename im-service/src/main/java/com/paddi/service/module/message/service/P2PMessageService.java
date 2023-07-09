@@ -1,5 +1,6 @@
 package com.paddi.service.module.message.service;
 
+import com.paddi.common.model.Result;
 import com.paddi.common.model.message.MessageContent;
 
 /**
@@ -9,4 +10,6 @@ import com.paddi.common.model.message.MessageContent;
  */
 public interface P2PMessageService {
     void process(MessageContent messageContent);
+
+    Result processBefore(String fromId, String toId, Integer appId);
 }

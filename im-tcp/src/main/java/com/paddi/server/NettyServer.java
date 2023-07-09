@@ -49,7 +49,7 @@ public class NettyServer {
                         channel.pipeline().addLast(new MessageEncoder());
                         //channel.pipeline().addLast(new IdleStateHandler(0, 0, 10));
                         channel.pipeline().addLast(new HeartBeatHandler(config.getHeartBeatTime()));
-                        channel.pipeline().addLast(new NettyServerHandler(config.getBrokerId()));
+                        channel.pipeline().addLast(new NettyServerHandler(config.getBrokerId(), config.getLogicUrl()));
                     }
                 });
     }

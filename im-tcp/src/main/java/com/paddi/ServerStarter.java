@@ -35,10 +35,10 @@ public class ServerStarter {
     private static void start(String path) {
         try {
             BootstrapConfig bootstrapConfig = initConfig(path);
-            new NettyServer(bootstrapConfig.getServer()).start();
-            new NettyWebSocketServer(bootstrapConfig.getServer()).start();
             //部分初始化存在依赖关系-需要按照顺序进行初始化
             RedisManager.init(bootstrapConfig.getServer().getRedis());
+            new NettyServer(bootstrapConfig.getServer()).start();
+            new NettyWebSocketServer(bootstrapConfig.getServer()).start();
             startMessageListener(bootstrapConfig);
             RocketMQFactory.init(bootstrapConfig.getServer().getRocketmq());
             MessageListener.init(bootstrapConfig.getServer());

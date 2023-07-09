@@ -1,6 +1,7 @@
 package com.paddi.service.module.message.service;
 
 
+import com.paddi.common.model.Result;
 import com.paddi.common.model.message.GroupChatMessageContent;
 
 /**
@@ -12,4 +13,6 @@ public interface GroupMessageService {
 
 
     void process(GroupChatMessageContent groupChatMessageContent);
+
+    Result processBefore(String fromId, String groupId, Integer appId);
 }

@@ -1,23 +1,22 @@
 package com.paddi.service.module.message.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.DelFlagEnum;
-import com.paddi.common.model.message.GroupChatMessageContent;
-import com.paddi.common.model.message.MessageContent;
-import com.paddi.service.module.message.entity.GroupMessageHistory;
-import com.paddi.service.module.message.entity.MessageBody;
-import com.paddi.service.module.message.entity.MessageHistory;
+import com.paddi.common.model.message.*;
 import com.paddi.service.module.message.mapper.GroupMessageHistoryMapper;
 import com.paddi.service.module.message.mapper.MessageBodyMapper;
 import com.paddi.service.module.message.mapper.MessageHistoryMapper;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.utils.SnowflakeIdWorker;
-import org.springframework.beans.BeanUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Paddi-Yan
@@ -39,67 +38,60 @@ public class MessageStoreServiceImpl implements MessageStoreService {
     @Autowired
     private GroupMessageHistoryMapper groupMessageHistoryMapper;
 
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void storeMessage(MessageContent messageContent) {
-        MessageBody messageBody = transformToMessageBody(messageContent);
-        messageBodyMapper.insert(messageBody);
-        List<MessageHistory> messageHistories = transformToMessageHistories(messageContent, messageBody);
-        messageHistoryMapper.insertBatchSomeColumn(messageHistories);
-        messageContent.setMessageKey(messageBody.getMessageKey());
+        StoredMessageBody storedMessageBody = transformToMessageBody(messageContent);
+        messageContent.setMessageKey(storedMessageBody.getMessageKey());
+        DoStoreP2PMessageDTO doStoreP2PMessageDTO = new DoStoreP2PMessageDTO();
+        doStoreP2PMessageDTO.setStoredMessageBody(storedMessageBody);
+        doStoreP2PMessageDTO.setMessageContent(messageContent);
+        rocketMQTemplate.convertAndSend(Constants.RocketMQConstants.STORE_P2P_MESSAGE, JSONObject.toJSONString(doStoreP2PMessageDTO));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void storeGroupMessage(GroupChatMessageContent groupChatMessageContent) {
-        MessageBody messageBody = transformToMessageBody(groupChatMessageContent);
-        messageBodyMapper.insert(messageBody);
-        GroupMessageHistory groupMessageHistory = transformToGroupMessageHistory(groupChatMessageContent, messageBody);
-        groupMessageHistoryMapper.insert(groupMessageHistory);
+        StoredMessageBody messageBody = transformToMessageBody(groupChatMessageContent);
         groupChatMessageContent.setMessageKey(messageBody.getMessageKey());
+        DoStoreGroupMessageDTO doStoreGroupMessageDTO = new DoStoreGroupMessageDTO();
+        doStoreGroupMessageDTO.setMessageContent(groupChatMessageContent);
+        doStoreGroupMessageDTO.setStoredMessageBody(messageBody);
+        rocketMQTemplate.convertAndSend(Constants.RocketMQConstants.STORE_GROUP_MESSAGE_GROUP, JSONObject.toJSONString(doStoreGroupMessageDTO));
     }
 
-    private GroupMessageHistory transformToGroupMessageHistory(GroupChatMessageContent groupChatMessageContent,
-                                                               MessageBody messageBody) {
-        GroupMessageHistory groupMessageHistory = new GroupMessageHistory();
-        BeanUtils.copyProperties(groupChatMessageContent, groupMessageHistory);
-        groupMessageHistory.setGroupId(groupMessageHistory.getGroupId());
-        groupMessageHistory.setMessageKey(messageBody.getMessageKey());
-        groupMessageHistory.setCreateTime(System.currentTimeMillis());
-        return groupMessageHistory;
+    @Override
+    public <T> void setMessageToCache(MessageContent messageContent) {
+        String cacheKey = messageContent.getAppId() +  Constants.RedisConstants.CACHE_MESSAGE  + messageContent.getMessageId();
+        redisTemplate.opsForValue().set(cacheKey, JSONObject.toJSONString(messageContent), 5, TimeUnit.MINUTES);
     }
 
-    private MessageBody transformToMessageBody(MessageContent messageContent) {
-        return MessageBody.builder()
-                          .appId(messageContent.getAppId())
-                          .messageKey(snowflakeIdWorker.nextId())
-                          .createTime(System.currentTimeMillis())
-                          .securityKey("")
-                          .extra(messageContent.getExtra())
-                          .delFlag(DelFlagEnum.NORMAL.getCode())
-                          .messageTime(messageContent.getMessageTime())
-                          .messageBody(messageContent.getMessageBody())
-                          .build();
+    @Override
+    public <T> T getMessageFromCache(Integer appId, String messageId, Class<T> clazz) {
+        String cacheKey = appId +  Constants.RedisConstants.CACHE_MESSAGE +  messageId;
+        String str = redisTemplate.opsForValue().get(cacheKey);
+        if(StrUtil.isEmpty(str)) {
+            return null;
+        }
+        return JSONObject.parseObject(str, clazz);
     }
 
-    private List<MessageHistory> transformToMessageHistories(MessageContent messageContent, MessageBody messageBody) {
-        List<MessageHistory> messageHistories = new ArrayList<>();
-
-        MessageHistory fromMessageHistory = new MessageHistory();
-        BeanUtils.copyProperties(messageContent, fromMessageHistory);
-        fromMessageHistory.setOwnerId(messageContent.getFromId());
-        fromMessageHistory.setMessageKey(messageBody.getMessageKey());
-        fromMessageHistory.setCreateTime(System.currentTimeMillis());
-
-        MessageHistory toMessageHistory = new MessageHistory();
-        BeanUtils.copyProperties(messageContent, toMessageHistory);
-        toMessageHistory.setOwnerId(messageContent.getToId());
-        toMessageHistory.setMessageKey(messageBody.getMessageKey());
-        toMessageHistory.setCreateTime(System.currentTimeMillis());
-
-        messageHistories.add(fromMessageHistory);
-        messageHistories.add(toMessageHistory);
-        return messageHistories;
+    private StoredMessageBody transformToMessageBody(MessageContent messageContent) {
+        return StoredMessageBody.builder()
+                                .appId(messageContent.getAppId())
+                                .messageKey(snowflakeIdWorker.nextId())
+                                .createTime(System.currentTimeMillis())
+                                .securityKey("")
+                                .extra(messageContent.getExtra())
+                                .delFlag(DelFlagEnum.NORMAL.getCode())
+                                .messageTime(messageContent.getMessageTime())
+                                .messageBody(messageContent.getMessageBody())
+                                .build();
     }
 }

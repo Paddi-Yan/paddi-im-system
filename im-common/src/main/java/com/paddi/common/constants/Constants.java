@@ -57,7 +57,7 @@ public class Constants {
         /**
          * 缓存客户端消息防重，格式： appId + :cacheMessage: + messageId
          */
-        public static final String CACHE_MESSAGE = "cache-message";
+        public static final String CACHE_MESSAGE = ":cache-message:";
 
         public static final String OFFLINE_MESSAGE = "offline-message";
 
@@ -94,12 +94,15 @@ public class Constants {
 
         public static final String FriendShip2Im = "friendShip2Pipeline";
 
-        public static final String StoreP2PMessage = "storeP2PMessage";
 
-        public static final String StoreGroupMessage = "storeGroupMessage";
+        public static final String STORE_P2P_MESSAGE = "storeP2PMessage";
+        public static final String STORE_GROUP_MESSAGE = "storeGroupMessage";
+        public static final String STORE_GROUP_MESSAGE_GROUP = "StoreGroupMessageConsumerGroup";
+        public static final String STORE_MESSAGE_SERVICE_GROUP = "StoreChatMessageConsumerGroup";
 
-        public static final String MESSAGE_SERVICE_GROUP = "ChatMessage";
-        public static final String GROUP_MESSAGE_SERVICE_GROUP = "GroupChatMessage";
+
+        public static final String MESSAGE_SERVICE_GROUP = "ChatMessageConsumerGroup";
+        public static final String GROUP_MESSAGE_SERVICE_GROUP = "GroupChatMessageConsumerGroup";
 
     }
 
@@ -142,23 +145,23 @@ public class Constants {
 
     }
 
-    public static class SeqConstants {
-        public static final String Message = "messageSeq";
+    public static class SequenceConstants {
+        public static final String Message = ":messageSequence:";
 
-        public static final String GroupMessage = "groupMessageSeq";
+        public static final String GroupMessage = ":groupMessageSequence:";
 
 
-        public static final String Friendship = "friendshipSeq";
+        public static final String Friendship = "friendshipSequence";
 
         //        public static final String FriendshipBlack = "friendshipBlackSeq";
 
-        public static final String FriendshipRequest = "friendshipRequestSeq";
+        public static final String FriendshipRequest = "friendshipRequestSequence";
 
-        public static final String FriendshipGroup = "friendshipGroupSeq";
+        public static final String FriendshipGroup = "friendshipGroupSequence";
 
-        public static final String Group = "groupSeq";
+        public static final String Group = "groupSequence";
 
-        public static final String Conversation = "conversationSeq";
+        public static final String Conversation = "conversationSequence";
 
     }
 

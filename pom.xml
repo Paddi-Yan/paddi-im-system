@@ -21,6 +21,7 @@
         <module>im-service</module>
         <module>im-codec</module>
         <module>im-tcp</module>
+        <module>im-message-store</module>
     </modules>
 
 

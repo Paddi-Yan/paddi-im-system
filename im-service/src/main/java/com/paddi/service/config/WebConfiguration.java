@@ -24,7 +24,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/v1/system/access")
                 .excludePathPatterns("/v1/system/signature")
-                .excludePathPatterns("/v1/message/checkSend");
+                .excludePathPatterns("/v1/message/check");
     }
 
     @Override

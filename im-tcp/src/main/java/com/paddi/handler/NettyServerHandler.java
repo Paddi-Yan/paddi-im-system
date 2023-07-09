@@ -4,15 +4,26 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.paddi.codec.pack.LoginPackage;
+import com.paddi.codec.pack.message.ChatMessageACK;
 import com.paddi.codec.protocol.Message;
 import com.paddi.codec.protocol.MessageHeader;
+import com.paddi.codec.protocol.MessagePackage;
 import com.paddi.common.enums.ConnectionStatusEnum;
+import com.paddi.common.enums.command.GroupEventCommand;
+import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.enums.command.SystemCommand;
+import com.paddi.common.model.Result;
 import com.paddi.common.model.UserClientDTO;
 import com.paddi.common.model.UserSession;
+import com.paddi.common.model.message.CheckMessageRequest;
+import com.paddi.feign.FeignMessageService;
 import com.paddi.publish.MessageProducer;
 import com.paddi.redis.RedisManager;
 import com.paddi.utils.SessionSocketHolder;
+import feign.Feign;
+import feign.Request;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -37,8 +48,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private Integer brokerId;
 
-    public NettyServerHandler(Integer brokerId) {
+    private String logicUrl;
+
+    private FeignMessageService feignMessageService;
+
+    public NettyServerHandler(Integer brokerId, String logicUrl) {
         this.brokerId = brokerId;
+        this.logicUrl = logicUrl;
+        this.feignMessageService = Feign.builder()
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
+                .options(new Request.Options(1000, 1000))
+                .target(FeignMessageService.class, logicUrl);
     }
 
 
@@ -100,8 +121,54 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         } else if(command == SystemCommand.PING.getCommand()) {
             //设置最后一次心跳包的接收时间
             ctx.channel().attr(AttributeKey.valueOf(READ_TIME)).set(System.currentTimeMillis());
-        }else {
+        } else if(command == MessageCommand.MSG_P2P.getCommand() || command == GroupEventCommand.MSG_GROUP.getCommand()) {
+            CheckMessageRequest request = new CheckMessageRequest();
+            request.setAppId(message.getMessageHeader().getAppId());
+            request.setCommand(message.getMessageHeader().getCommand());
+            JSONObject obj = JSON.parseObject(JSONObject.toJSONString(message.getMessagePack()));
+            String fromId = obj.getString("fromId");
+            request.setFromId(fromId);
+            String toId = null;
+            if(command == MessageCommand.MSG_P2P.getCommand()) {
+                toId = obj.getString("toId");
+            }else {
+                toId = obj.getString("groupId");
+            }
+            request.setToId(toId);
+            Result result = feignMessageService.checkMessage(request);
+            if(result.isSuccess()) {
+                MessageProducer.sendMessage(message, command);
+            }else {
+                Integer ackCommand = 0;
+                if(command == MessageCommand.MSG_P2P.getCommand()) {
+                    ackCommand = MessageCommand.MSG_ACK.getCommand();
+                }else {
+                    ackCommand = GroupEventCommand.GROUP_MSG_ACK.getCommand();
+                }
+
+                ChatMessageACK chatMessageACK = new ChatMessageACK(obj.getString("messageId"));
+                result.setData(chatMessageACK);
+                MessagePackage<Result> messagePackage = new MessagePackage<>();
+                messagePackage.setData(result);
+                messagePackage.setCommand(ackCommand);
+                ctx.channel().writeAndFlush(messagePackage);
+            }
+        }  else {
             MessageProducer.sendMessage(message, command);
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        SessionSocketHolder.offlineUserSession((NioSocketChannel) ctx.channel());
+        ctx.close();
+    }
+
+
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+
+
     }
 }

@@ -8,9 +8,9 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class MessageReadedPackage {
+public class MessageReadPackage {
 
-    private long messageSequence;
+    private Long messageSequence;
 
     private String fromId;
 

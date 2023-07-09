@@ -1,5 +1,6 @@
 package com.paddi.service.module.message.service;
 
+import com.paddi.common.model.message.MessageReadContent;
 import com.paddi.common.model.message.MessageReceiveACKContent;
 
 /**
@@ -9,4 +10,6 @@ import com.paddi.common.model.message.MessageReceiveACKContent;
  */
 public interface MessageSyncService {
     void messageReceiveNotify(MessageReceiveACKContent messageReceiveACKContent);
+
+    void messageReadNotify(MessageReadContent messageReadContent);
 }

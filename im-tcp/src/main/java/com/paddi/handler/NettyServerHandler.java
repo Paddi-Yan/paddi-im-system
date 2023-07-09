@@ -153,7 +153,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                 messagePackage.setCommand(ackCommand);
                 ctx.channel().writeAndFlush(messagePackage);
             }
-        }  else {
+        } else {
             MessageProducer.sendMessage(message, command);
         }
     }

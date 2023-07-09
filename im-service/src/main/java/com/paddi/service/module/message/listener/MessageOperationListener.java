@@ -3,9 +3,13 @@ package com.paddi.service.module.message.listener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.paddi.common.constants.Constants;
+import com.paddi.common.enums.command.GroupEventCommand;
 import com.paddi.common.enums.command.MessageCommand;
+import com.paddi.common.model.message.GroupChatMessageContent;
 import com.paddi.common.model.message.MessageContent;
+import com.paddi.common.model.message.MessageReadContent;
 import com.paddi.common.model.message.MessageReceiveACKContent;
+import com.paddi.service.module.message.service.GroupMessageService;
 import com.paddi.service.module.message.service.MessageSyncService;
 import com.paddi.service.module.message.service.P2PMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +31,13 @@ import static com.paddi.common.constants.Constants.COMMAND;
 )
 @Slf4j
 @Component
-public class ChatMessageListener implements RocketMQListener<String> {
+public class MessageOperationListener implements RocketMQListener<String> {
 
     @Autowired
     private P2PMessageService p2pMessageService;
+
+    @Autowired
+    private GroupMessageService groupMessageService;
 
     @Autowired
     private MessageSyncService messageSyncService;
@@ -44,9 +51,15 @@ public class ChatMessageListener implements RocketMQListener<String> {
         if(command.equals(MessageCommand.MSG_P2P.getCommand())) {
             MessageContent messageContent = obj.toJavaObject(MessageContent.class);
             p2pMessageService.process(messageContent);
+        } else if(command.equals(GroupEventCommand.MSG_GROUP.getCommand())) {
+            GroupChatMessageContent groupChatMessageContent = obj.toJavaObject(GroupChatMessageContent.class);
+            groupMessageService.process(groupChatMessageContent);
         } else if(command.equals(MessageCommand.MSG_RECEIVE_ACK.getCommand())) {
             MessageReceiveACKContent messageReceiveACKContent = obj.toJavaObject(MessageReceiveACKContent.class);
             messageSyncService.messageReceiveNotify(messageReceiveACKContent);
+        } else if(command.equals(MessageCommand.MSG_READ.getCommand())) {
+            MessageReadContent messageReadContent = obj.toJavaObject(MessageReadContent.class);
+            messageSyncService.messageReadNotify(messageReadContent);
         }
     }
 }

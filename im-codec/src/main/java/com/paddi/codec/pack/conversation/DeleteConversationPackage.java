@@ -8,15 +8,9 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class UpdateConversationPack {
+public class DeleteConversationPackage {
 
     private String conversationId;
-
-    private Integer isMute;
-
-    private Integer isTop;
-
-    private Integer conversationType;
 
     private Long sequence;
 

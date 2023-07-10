@@ -486,4 +486,9 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         }).collect(Collectors.toList());
         return result;
     }
+
+    @Override
+    public List<String> getJoinedGroupIdList(Integer appId, String userId) {
+        return groupMemberMapper.getJoinedGroupIdList(appId, userId);
+    }
 }

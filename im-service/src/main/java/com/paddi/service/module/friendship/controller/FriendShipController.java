@@ -1,6 +1,7 @@
 package com.paddi.service.module.friendship.controller;
 
 import com.paddi.common.model.Result;
+import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.friendship.model.req.*;
 import com.paddi.service.module.friendship.service.FriendShipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +80,13 @@ public class FriendShipController {
     }
 
     @RequestMapping("/checkBlack")
-    public Result checkBlck(@RequestBody @Validated CheckFriendShipRequest request, Integer appId){
+    public Result checkBlack(@RequestBody @Validated CheckFriendShipRequest request, Integer appId){
         request.setAppId(appId);
         return friendShipService.checkBlack(request);
+    }
+
+    @GetMapping("/syncFriendShipList")
+    public Result syncFriendShipList(@RequestBody SyncRequest request) {
+        return friendShipService.syncFriendShipList(request);
     }
 }

@@ -6,13 +6,12 @@ import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.model.Result;
 import com.paddi.common.model.message.CheckMessageRequest;
+import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.message.service.GroupMessageService;
+import com.paddi.service.module.message.service.MessageSyncService;
 import com.paddi.service.module.message.service.P2PMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: Paddi-Yan
@@ -29,6 +28,9 @@ public class MessageController {
     @Autowired
     private GroupMessageService groupMessageService;
 
+    @Autowired
+    private MessageSyncService messageSyncService;
+
     @PostMapping("/check")
     public Result checkMessage(@RequestBody CheckMessageRequest request) {
         if(request.getCommand() == MessageCommand.MSG_P2P.getCommand()) {
@@ -37,5 +39,10 @@ public class MessageController {
             return groupMessageService.processBefore(request.getFromId(), request.getToId(), request.getAppId());
         }
         throw new ApplicationException(BaseErrorCode.PARAMETER_ERROR);
+    }
+
+    @GetMapping("/syncOfflineMessage")
+    public Result syncOfflineMessage(@RequestBody SyncRequest request) {
+        return messageSyncService.syncOfflineMessage(request);
     }
 }

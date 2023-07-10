@@ -5,6 +5,7 @@ import com.paddi.service.module.friendship.entity.po.FriendShip;
 import com.paddi.service.module.friendship.model.req.CheckFriendShipRequest;
 import com.paddi.service.module.friendship.model.resp.CheckFriendShipResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface FriendShipMapper extends BaseMapper<FriendShip> {
     List<CheckFriendShipResponse> checkBlackFriendShip(CheckFriendShipRequest request);
 
     List<CheckFriendShipResponse> checkBlackFriendShipBoth(CheckFriendShipRequest request);
+
+    Long getFriendShipMaxSequence(@Param("appId") Integer appId, @Param("userId") String operator);
 }

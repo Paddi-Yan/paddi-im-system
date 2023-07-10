@@ -16,6 +16,8 @@ public class MessageReadContent extends ClientInfo {
 
     private String toId;
 
+    private String groupId;
+
     /**
      * 会话类型: 私聊/群聊
      */

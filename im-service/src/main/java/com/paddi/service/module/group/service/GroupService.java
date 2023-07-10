@@ -1,6 +1,7 @@
 package com.paddi.service.module.group.service;
 
 import com.paddi.common.model.Result;
+import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.group.entity.po.Group;
 import com.paddi.service.module.group.model.req.*;
 
@@ -27,4 +28,8 @@ public interface GroupService {
     Result transferGroup(TransferGroupRequest request);
 
     Result muteGroup(MuteGroupRequest request);
+
+    Result syncJoinedGroupList(SyncRequest request);
+
+    Long getGroupMaxSequence(Integer appId, String userId);
 }

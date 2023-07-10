@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paddi.service.module.conversation.mapper.ConversationMapper">
+
+    <update id="readMark">
+        update im_conversation_set
+        set read_sequence = #{readSequence},
+            sequence = #{sequence}
+        where
+            conversation_id = #{conversationId}
+        and
+            app_id = #{appId}
+        and
+            read_sequence <![CDATA[ < ]]> #{readSequence}
+    </update>
+
+    <select id="getMaxSequence" resultType="java.lang.Long">
+        select max(sequence)
+        from im_conversation_set
+        where app_id = #{appId}
+        and from_id = #{userId}
+    </select>
+</mapper>

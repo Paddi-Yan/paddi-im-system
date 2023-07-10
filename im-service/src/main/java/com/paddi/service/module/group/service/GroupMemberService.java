@@ -38,4 +38,7 @@ public interface GroupMemberService {
     List<String> getGroupMemberId(String groupId, Integer appId);
 
     List<GroupMemberVO> getGroupManager(String groupId, Integer appId);
+
+    List<String> getJoinedGroupIdList(Integer appId, String userId);
+
 }

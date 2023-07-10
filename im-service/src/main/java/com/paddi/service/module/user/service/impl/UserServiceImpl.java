@@ -10,12 +10,11 @@ import com.paddi.common.enums.command.UserEventCommand;
 import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.model.Result;
 import com.paddi.service.config.ApplicationConfiguration;
+import com.paddi.service.module.group.service.GroupService;
 import com.paddi.service.module.user.entity.po.User;
 import com.paddi.service.module.user.mapper.UserMapper;
-import com.paddi.service.module.user.model.req.DeleteUserRequest;
-import com.paddi.service.module.user.model.req.GetUserInfoRequest;
-import com.paddi.service.module.user.model.req.ImportUserRequest;
-import com.paddi.service.module.user.model.req.ModifyUserInfoRequest;
+import com.paddi.service.module.user.model.req.*;
+import com.paddi.service.module.user.model.resp.GetSyncProgressResponse;
 import com.paddi.service.module.user.model.resp.GetUserInfoResponse;
 import com.paddi.service.module.user.model.resp.ImportUserResponse;
 import com.paddi.service.module.user.service.UserService;
@@ -24,6 +23,7 @@ import com.paddi.service.utils.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,6 +52,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MessageProducer messageProducer;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private GroupService groupService;
 
     @Override
     public Result importUser(ImportUserRequest importUserRequest) {
@@ -169,5 +175,15 @@ public class UserServiceImpl implements UserService {
             return Result.success();
         }
         throw new ApplicationException(UserErrorCode.MODIFY_USER_ERROR);
+    }
+
+    @Override
+    public Result getSyncProgress(GetSyncProgressRequest request) {
+        String hashKey = request.getAppId() + Constants.RedisConstants.SEQUENCE_PREFIX + request.getUserId();
+        Map<Object, Object> syncProgressSequenceMap = redisTemplate.opsForHash().entries(hashKey);
+        Long groupMaxSequence = groupService.getGroupMaxSequence(request.getAppId(), request.getUserId());
+        syncProgressSequenceMap.put(Constants.SequenceConstants.Group, String.valueOf(groupMaxSequence));
+        GetSyncProgressResponse getSyncProgressResponse = new GetSyncProgressResponse(syncProgressSequenceMap);
+        return Result.success(getSyncProgressResponse);
     }
 }

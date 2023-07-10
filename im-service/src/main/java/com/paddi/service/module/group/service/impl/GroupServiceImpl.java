@@ -17,6 +17,8 @@ import com.paddi.common.exception.ApplicationException;
 import com.paddi.common.exception.BadRequestException;
 import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
+import com.paddi.common.model.message.SyncRequest;
+import com.paddi.common.model.message.SyncResponse;
 import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.group.entity.dto.GroupMemberDTO;
 import com.paddi.service.module.group.entity.po.Group;
@@ -30,6 +32,7 @@ import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.group.service.GroupService;
 import com.paddi.service.utils.CallbackService;
 import com.paddi.service.utils.GroupMessageProducer;
+import com.paddi.service.utils.RedisSequenceGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +64,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupMessageProducer groupMessageProducer;
+
+    @Autowired
+    private RedisSequenceGenerator sequenceGenerator;
 
 
     @Override
@@ -134,9 +140,12 @@ public class GroupServiceImpl implements GroupService {
             }
         }
 
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.Group);
+
         Group group = new Group();
         group.setCreateTime(System.currentTimeMillis());
         group.setStatus(GroupStatusEnum.NORMAL.getCode());
+        group.setSequence(sequence);
         BeanUtils.copyProperties(request, group);
         groupMapper.insert(group);
 
@@ -158,6 +167,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         CreateGroupPackage createGroupPackage = new CreateGroupPackage();
+        createGroupPackage.setSequence(sequence);
         BeanUtils.copyProperties(group, createGroupPackage);
         groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.CREATED_GROUP, createGroupPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
@@ -211,10 +221,11 @@ public class GroupServiceImpl implements GroupService {
                 throw new BadRequestException(GroupErrorCode.THIS_OPERATE_NEED_MANAGER_ROLE);
             }
         }
-
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.Group);
         Group updateInfo = new Group();
         BeanUtils.copyProperties(request, updateInfo);
         updateInfo.setUpdateTime(System.currentTimeMillis());
+        updateInfo.setSequence(sequence);
         int res = groupMapper.update(updateInfo, wrapper);
         if(res != 1) {
             throw new ApplicationException(GroupErrorCode.UPDATE_GROUP_BASE_INFO_ERROR);
@@ -228,6 +239,7 @@ public class GroupServiceImpl implements GroupService {
 
         UpdateGroupInfoPackage updateGroupInfoPackage = new UpdateGroupInfoPackage();
         BeanUtils.copyProperties(request, updateGroupInfoPackage);
+        updateGroupInfoPackage.setSequence(sequence);
         groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.UPDATED_GROUP, updateGroupInfoPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
 
@@ -279,8 +291,9 @@ public class GroupServiceImpl implements GroupService {
                 throw new BadRequestException(GroupErrorCode.THIS_OPERATE_NEED_OWNER_ROLE);
             }
         }
-
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.Group);
         Group updateInfo = new Group();
+        updateInfo.setSequence(sequence);
         updateInfo.setStatus(GroupStatusEnum.DESTROY.getCode());
         int res = groupMapper.update(updateInfo, wrapper);
         if(res != 1) {
@@ -295,6 +308,7 @@ public class GroupServiceImpl implements GroupService {
 
         DestroyGroupPackage destroyGroupPackage = new DestroyGroupPackage();
         destroyGroupPackage.setGroupId(request.getGroupId());
+        destroyGroupPackage.setSequence(sequence);
         groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.DESTROY_GROUP, destroyGroupPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
 
@@ -322,9 +336,11 @@ public class GroupServiceImpl implements GroupService {
         if(!newOwnerRoleQueryResult.isSuccess()) {
             return newOwnerRoleQueryResult;
         }
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.Group);
 
         Group updateInfo = new Group();
         updateInfo.setOwnerId(request.getOwnerId());
+        updateInfo.setSequence(sequence);
         groupMapper.update(updateInfo, wrapper);
         groupMemberService.transferGroupMember(request.getOwnerId(), request.getGroupId(), request.getAppId());
 
@@ -337,6 +353,7 @@ public class GroupServiceImpl implements GroupService {
         TransferGroupPackage transferGroupPackage = new TransferGroupPackage();
         transferGroupPackage.setGroupId(request.getGroupId());
         transferGroupPackage.setOwnerId(request.getOwnerId());
+        transferGroupPackage.setSequence(sequence);
         groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.TRANSFER_GROUP, transferGroupPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
         return Result.success();
@@ -367,19 +384,60 @@ public class GroupServiceImpl implements GroupService {
                 throw new ApplicationException(GroupErrorCode.THIS_OPERATE_NEED_MANAGER_ROLE);
             }
         }
-
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.Group);
         Group updateGroup = new Group();
+        updateGroup.setSequence(sequence);
         updateGroup.setMute(request.getMute());
         groupMapper.update(updateGroup, Wrappers.lambdaUpdate(Group.class)
                 .eq(Group::getAppId, request.getAppId())
                 .eq(Group::getGroupId, request.getGroupId()));
 
         MuteGroupPackage muteGroupPackage = new MuteGroupPackage();
+        muteGroupPackage.setSequence(sequence);
         muteGroupPackage.setGroupId(request.getGroupId());
         groupMessageProducer.sendMessage(request.getOperator(), GroupEventCommand.MUTE_GROUP, muteGroupPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
 
         return Result.success();
+    }
+
+    @Override
+    public Result syncJoinedGroupList(SyncRequest request) {
+        if(request.getLimit() > 100) {
+            request.setLimit(100);
+        }
+
+        SyncResponse<Group> syncResponse = new SyncResponse<>();
+        List<String> joinedGroupIdList = groupMemberService.getJoinedGroupIdList(request.getAppId(), request.getOperator());
+
+        if(CollectionUtil.isNotEmpty(joinedGroupIdList)) {
+            List<Group> groupList = groupMapper.selectList(Wrappers.lambdaQuery(Group.class)
+                                                                .eq(Group :: getAppId, request.getAppId())
+                                                                .in(Group :: getGroupId, joinedGroupIdList)
+                                                                .gt(Group :: getSequence, request.getLastSequence())
+                                                                .last("limit" + request.getLimit())
+                                                                .orderByAsc(Group :: getSequence));
+            if(CollectionUtil.isNotEmpty(groupList)) {
+                Group maxSequenceGroup = groupList.get(groupList.size() - 1);
+                Long maxSequence = groupMapper.getMaxSequence(request.getAppId(), joinedGroupIdList);
+                syncResponse.setDataList(groupList);
+                syncResponse.setMaxSequence(maxSequence);
+                syncResponse.setIsCompleted(maxSequenceGroup.getSequence() >= maxSequence);
+                return Result.success(syncResponse);
+            }
+        }
+        syncResponse.setIsCompleted(true);
+        return Result.success(syncResponse);
+    }
+
+    @Override
+    public Long getGroupMaxSequence(Integer appId, String userId) {
+        List<String> joinedGroupIdList = groupMemberService.getJoinedGroupIdList(appId, userId);
+        if(CollectionUtil.isNotEmpty(joinedGroupIdList)) {
+            Long maxSequence = groupMapper.getMaxSequence(appId, joinedGroupIdList);
+            return maxSequence;
+        }
+        return 0L;
     }
 
     private void checkGroup(Group group) {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paddi.service.module.group.mapper.GroupMapper">
+
+    <select id="getMaxSequence" resultType="java.lang.Long">
+        select max(sequence)
+        from im_group
+        where app_id = #{appId}
+        <if test="list != null and list.size() > 0">
+            and group_id in
+            <foreach collection="list" open="(" separator="," close=")" item="id">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+</mapper>

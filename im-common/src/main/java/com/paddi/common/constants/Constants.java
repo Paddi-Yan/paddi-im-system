@@ -59,12 +59,12 @@ public class Constants {
          */
         public static final String CACHE_MESSAGE = ":cache-message:";
 
-        public static final String OFFLINE_MESSAGE = "offline-message";
+        public static final String OFFLINE_MESSAGE = ":offline-message:";
 
         /**
          * seq 前缀
          */
-        public static final String SEQ_PREFIX = "seq";
+        public static final String SEQUENCE_PREFIX = ":sequence:";
 
         /**
          * 用户订阅列表，格式 ：appId + :subscribe: + userId。Hash结构，filed为订阅自己的人

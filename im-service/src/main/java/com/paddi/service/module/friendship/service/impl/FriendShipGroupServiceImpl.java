@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.paddi.codec.pack.friend.AddFriendGroupPackage;
 import com.paddi.codec.pack.friend.DeleteFriendGroupPackage;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.DelFlagEnum;
 import com.paddi.common.enums.FriendShipErrorCode;
 import com.paddi.common.enums.command.FriendshipEventCommand;
@@ -18,7 +19,9 @@ import com.paddi.service.module.friendship.model.req.DeleteFriendShipGroupReques
 import com.paddi.service.module.friendship.service.FriendShipGroupMemberService;
 import com.paddi.service.module.friendship.service.FriendShipGroupService;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.utils.DataSequenceUtils;
 import com.paddi.service.utils.MessageProducer;
+import com.paddi.service.utils.RedisSequenceGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -46,6 +49,12 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
     @Autowired
     private MessageProducer messageProducer;
 
+    @Autowired
+    private RedisSequenceGenerator sequenceGenerator;
+
+    @Autowired
+    private DataSequenceUtils sequenceUtils;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result addGroup(AddFriendShipGroupRequest request) {
@@ -58,15 +67,17 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
         if(friendShipGroup != null) {
             return Result.error(FriendShipErrorCode.FRIEND_SHIP_GROUP_IS_EXIST);
         }
-
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.FriendshipGroup);
         FriendShipGroup insertInfo = FriendShipGroup.builder()
                                                .appId(request.getAppId())
                                                .fromId(request.fromId)
+                                               .sequence(sequence)
                                                .groupName(request.getGroupName())
                                                .createTime(System.currentTimeMillis())
                                                .delFlag(DelFlagEnum.NORMAL.getCode()).build();
         try {
             int insert = friendShipGroupMapper.insert(insertInfo);
+            sequenceUtils.writeSequence(request.getAppId(), request.getOperator(), Constants.SequenceConstants.FriendshipGroup, sequence);
             if(insert != 1) {
                 return Result.error(FriendShipErrorCode.FRIEND_SHIP_GROUP_CREATE_ERROR);
             }
@@ -86,6 +97,7 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
         AddFriendGroupPackage addFriendGroupPackage = new AddFriendGroupPackage();
         addFriendGroupPackage.setFromId(request.fromId);
         addFriendGroupPackage.setGroupName(request.getGroupName());
+        addFriendGroupPackage.setSequence(sequence);
         messageProducer.sendToOtherUserTerminal(request.fromId, FriendshipEventCommand.FRIEND_GROUP_ADD, addFriendGroupPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
 
@@ -116,15 +128,18 @@ public class FriendShipGroupServiceImpl implements FriendShipGroupService {
                                                              .eq(FriendShipGroup :: getDelFlag, DelFlagEnum.NORMAL.getCode());
             FriendShipGroup friendShipGroup = friendShipGroupMapper.selectOne(wrapper);
             if(friendShipGroup != null) {
+                Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.FriendshipGroup);
                 FriendShipGroup deleteInfo = new FriendShipGroup();
                 deleteInfo.setGroupId(friendShipGroup.getGroupId());
+                deleteInfo.setSequence(sequence);
                 deleteInfo.setDelFlag(DelFlagEnum.DELETE.getCode());
                 friendShipGroupMapper.updateById(deleteInfo);
                 friendShipGroupMemberService.clearGroupMember(friendShipGroup.getGroupId());
-
+                sequenceUtils.writeSequence(request.getAppId(), request.getOperator(), Constants.SequenceConstants.FriendshipGroup, sequence);
                 DeleteFriendGroupPackage deleteFriendGroupPackage = new DeleteFriendGroupPackage();
                 deleteFriendGroupPackage.setFromId(request.getFromId());
                 deleteFriendGroupPackage.setGroupName(groupName);
+                deleteFriendGroupPackage.setSequence(sequence);
                 messageProducer.sendToOtherUserTerminal(request.getFromId(), FriendshipEventCommand.FRIEND_GROUP_DELETE, deleteFriendGroupPackage,
                         new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
 

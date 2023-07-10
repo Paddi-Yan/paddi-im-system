@@ -13,4 +13,6 @@ public class TransferGroupPackage {
 
     private String ownerId;
 
+    private Long sequence;
+
 }

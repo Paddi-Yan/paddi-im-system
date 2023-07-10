@@ -1,6 +1,7 @@
 package com.paddi.service.module.group.controller;
 
 import com.paddi.common.model.Result;
+import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.group.model.req.*;
 import com.paddi.service.module.group.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,11 @@ public class GroupController {
         request.setAppId(appId);
         request.setOperator(identifier);
         return groupService.muteGroup(request);
+    }
+
+    @GetMapping("/syncJoinedGroupList")
+    public Result syncJoinedGroupList(@RequestBody SyncRequest request) {
+        return groupService.syncJoinedGroupList(request);
     }
 
 }

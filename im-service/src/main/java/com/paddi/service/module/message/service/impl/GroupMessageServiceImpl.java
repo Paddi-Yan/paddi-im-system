@@ -1,16 +1,19 @@
 package com.paddi.service.module.message.service.impl;
 
 import com.paddi.common.constants.Constants;
+import com.paddi.common.enums.ConversationTypeEnum;
 import com.paddi.common.enums.command.GroupEventCommand;
 import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.common.model.message.GroupChatMessageContent;
+import com.paddi.common.model.message.GroupOfflineMessageContent;
 import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.message.service.CheckSendMessageService;
 import com.paddi.service.module.message.service.GroupMessageService;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.utils.MessageProducer;
 import com.paddi.service.utils.RedisSequenceGenerator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +63,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
         String groupId = groupChatMessageContent.getGroupId();
         Integer appId = groupChatMessageContent.getAppId();
 
+        List<String> groupMemberIdList = groupMemberService.getGroupMemberId(groupChatMessageContent.getGroupId(), groupChatMessageContent.getAppId());
         GroupChatMessageContent messageFromCache = messageStoreService.getMessageFromCache(groupChatMessageContent.getAppId(),
                 groupChatMessageContent.getMessageId(),
                 GroupChatMessageContent.class);
@@ -67,7 +71,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
             threadPoolExecutor.execute(() -> {
                 sendACK(messageFromCache, Result.success());
                 syncToSender(messageFromCache);
-                dispatchMessage(messageFromCache);
+                dispatchMessage(messageFromCache, groupMemberIdList);
             });
             return;
         }
@@ -81,16 +85,22 @@ public class GroupMessageServiceImpl implements GroupMessageService {
 
         threadPoolExecutor.execute(() -> {
             messageStoreService.storeGroupMessage(groupChatMessageContent);
+
+            //存储离线消息
+            GroupOfflineMessageContent groupOfflineMessageContent = new GroupOfflineMessageContent();
+            BeanUtils.copyProperties(groupOfflineMessageContent, groupOfflineMessageContent);
+            groupOfflineMessageContent.setConversationType(ConversationTypeEnum.GROUP.getCode());
+            messageStoreService.storeGroupOfflineMessage(groupOfflineMessageContent, groupMemberIdList);
+
             sendACK(groupChatMessageContent, Result.success());
             syncToSender(groupChatMessageContent);
-            dispatchMessage(groupChatMessageContent);
+            dispatchMessage(groupChatMessageContent, groupMemberIdList);
 
             messageStoreService.setMessageToCache(groupChatMessageContent);
         });
     }
 
-    private void dispatchMessage(GroupChatMessageContent groupChatMessageContent) {
-        List<String> groupMemberIdList = groupMemberService.getGroupMemberId(groupChatMessageContent.getGroupId(), groupChatMessageContent.getAppId());
+    private void dispatchMessage(GroupChatMessageContent groupChatMessageContent, List<String> groupMemberIdList) {
         groupMemberIdList.forEach(memberId -> {
             if(!memberId.equals(groupChatMessageContent.getFromId())) {
                 messageProducer.sendToAllUserTerminal(memberId,

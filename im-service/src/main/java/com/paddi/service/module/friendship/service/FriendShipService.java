@@ -2,6 +2,7 @@ package com.paddi.service.module.friendship.service;
 
 import com.paddi.common.model.BaseRequest;
 import com.paddi.common.model.Result;
+import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.friendship.entity.dto.FriendDTO;
 import com.paddi.service.module.friendship.model.req.*;
 
@@ -34,4 +35,6 @@ public interface FriendShipService {
     Result deleteBlack(DeleteBlackRequest request);
 
     Result checkBlack(CheckFriendShipRequest request);
+
+    Result syncFriendShipList(SyncRequest request);
 }

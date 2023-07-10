@@ -49,6 +49,11 @@ public class UserController {
         return userService.modifyUserInfo(request);
     }
 
+    @GetMapping("/getSyncProgress")
+    public Result getSyncProgress(@RequestBody GetSyncProgressRequest request) {
+        return userService.getSyncProgress(request);
+    }
+
 
 }
 

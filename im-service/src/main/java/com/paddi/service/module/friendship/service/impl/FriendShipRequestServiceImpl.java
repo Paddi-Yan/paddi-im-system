@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.paddi.codec.pack.friend.ApproveFriendRequestPackage;
 import com.paddi.codec.pack.friend.ReadAllFriendRequestPack;
+import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.ApproverFriendRequestStatusEnum;
 import com.paddi.common.enums.FriendRequestReadStatusEnum;
 import com.paddi.common.enums.FriendShipErrorCode;
@@ -20,7 +21,9 @@ import com.paddi.service.module.friendship.model.req.ApproveFriendRequestReq;
 import com.paddi.service.module.friendship.model.req.ReadFriendShipRequestReq;
 import com.paddi.service.module.friendship.service.FriendShipRequestService;
 import com.paddi.service.module.friendship.service.FriendShipService;
+import com.paddi.service.utils.DataSequenceUtils;
 import com.paddi.service.utils.MessageProducer;
+import com.paddi.service.utils.RedisSequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +47,12 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
     @Autowired
     private MessageProducer messageProducer;
 
+    @Autowired
+    private DataSequenceUtils sequenceUtils;
+
+    @Autowired
+    private RedisSequenceGenerator sequenceGenerator;
+
     @Override
     public Result addFriendShipRequest(BaseRequest baseRequest, String fromId, FriendDTO friendDTO, Integer appId) {
         LambdaQueryWrapper<FriendShipRequest> wrapper = Wrappers.lambdaQuery(FriendShipRequest.class)
@@ -51,11 +60,13 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
                                                            .eq(FriendShipRequest :: getToId, friendDTO.getToId())
                                                            .eq(FriendShipRequest :: getAppId, appId);
         FriendShipRequest request = friendShipRequestMapper.selectOne(wrapper);
+        Long sequence = sequenceGenerator.generate(appId + ":" + Constants.SequenceConstants.FriendshipRequest);
         if(request == null) {
             request = FriendShipRequest.builder()
                                .addSource(friendDTO.getAddSource())
                                .addWording(friendDTO.getAddWording())
                                .appId(appId)
+                               .sequence(sequence)
                                .fromId(fromId)
                                .toId(friendDTO.getToId())
                                .readStatus(FriendRequestReadStatusEnum.UNREAD.getCode())
@@ -64,6 +75,7 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
                                .createTime(System.currentTimeMillis())
                                .build();
             friendShipRequestMapper.insert(request);
+            sequenceUtils.writeSequence(appId, request.getToId(), Constants.SequenceConstants.FriendshipRequest, sequence);
         }else {
             //修改记录内容 和更新时间
             if(StringUtils.isNotBlank(friendDTO.getAddSource())){
@@ -78,7 +90,9 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
             request.setReadStatus(FriendRequestReadStatusEnum.UNREAD.getCode());
             request.setApproveStatus(ApproverFriendRequestStatusEnum.UNDISPOSED.getCode());
             request.setUpdateTime(System.currentTimeMillis());
+            request.setSequence(sequence);
             friendShipRequestMapper.updateById(request);
+            sequenceUtils.writeSequence(appId, request.getToId(), Constants.SequenceConstants.FriendshipRequest, sequence);
         }
 
         //发送给被添加的一方
@@ -97,11 +111,15 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
         if(!request.getOperator().equals(friendShipRequest.getToId())) {
             throw new ApplicationException(FriendShipErrorCode.NOT_APPROVER_OTHER_MAN_REQUEST);
         }
+        Long sequence = sequenceGenerator.generate(request.getAppId() + ":" + Constants.SequenceConstants.FriendshipRequest);
         FriendShipRequest requestUpdateInfo = new FriendShipRequest();
         requestUpdateInfo.setApproveStatus(request.getStatus());
         requestUpdateInfo.setUpdateTime(System.currentTimeMillis());
         requestUpdateInfo.setId(request.getId());
+        requestUpdateInfo.setSequence(sequence);
         friendShipRequestMapper.updateById(requestUpdateInfo);
+
+        sequenceUtils.writeSequence(request.getAppId(), request.getOperator(), Constants.SequenceConstants.FriendshipRequest, sequence);
 
         if(request.getStatus().equals(ApproverFriendRequestStatusEnum.AGREE.getCode())) {
             FriendDTO friendDTO = new FriendDTO();
@@ -117,6 +135,7 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
         ApproveFriendRequestPackage approveFriendRequestPackage = new ApproveFriendRequestPackage();
         approveFriendRequestPackage.setId(request.getId());
         approveFriendRequestPackage.setStatus(request.getStatus());
+        approveFriendRequestPackage.setSequence(sequence);
         messageProducer.sendToOtherUserTerminal(friendShipRequest.getToId(), FriendshipEventCommand.FRIEND_REQUEST_APPROVER, approveFriendRequestPackage,
                 new ClientInfo(request.getAppId(), request.getClientType(), request.getImei()));
         return Result.success();
@@ -133,13 +152,19 @@ public class FriendShipRequestServiceImpl implements FriendShipRequestService {
 
     @Override
     public Result readFriendShipRequestReq(ReadFriendShipRequestReq req) {
+        Long sequence = sequenceGenerator.generate(req.getAppId() + ":" + Constants.SequenceConstants.FriendshipRequest);
         FriendShipRequest friendShipRequest = new FriendShipRequest();
         friendShipRequest.setReadStatus(FriendRequestReadStatusEnum.READ.getCode());
+        friendShipRequest.setSequence(sequence);
         friendShipRequestMapper.update(friendShipRequest,
                 Wrappers.lambdaUpdate(FriendShipRequest.class)
                         .eq(FriendShipRequest::getToId, req.getFromId())
                         .eq(FriendShipRequest::getAppId, req.getAppId()));
+
+        sequenceUtils.writeSequence(req.getAppId(), req.getFromId(), Constants.SequenceConstants.FriendshipRequest, sequence);
+
         ReadAllFriendRequestPack readAllFriendRequestPack = new ReadAllFriendRequestPack();
+        readAllFriendRequestPack.setSequence(sequence);
         readAllFriendRequestPack.setFromId(req.getFromId());
         messageProducer.sendToOtherUserTerminal(req.getFromId(), FriendshipEventCommand.FRIEND_REQUEST_READ, readAllFriendRequestPack,
                 new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));

@@ -5,17 +5,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.paddi.common.constants.Constants;
 import com.paddi.common.enums.DelFlagEnum;
 import com.paddi.common.model.message.*;
-import com.paddi.service.module.message.mapper.GroupMessageHistoryMapper;
-import com.paddi.service.module.message.mapper.MessageBodyMapper;
-import com.paddi.service.module.message.mapper.MessageHistoryMapper;
+import com.paddi.service.config.ApplicationConfiguration;
+import com.paddi.service.module.conversation.service.ConversationService;
+import com.paddi.service.module.group.service.GroupMemberService;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.utils.SnowflakeIdWorker;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,22 +29,22 @@ import java.util.concurrent.TimeUnit;
 public class MessageStoreServiceImpl implements MessageStoreService {
 
     @Autowired
-    private MessageHistoryMapper messageHistoryMapper;
-
-    @Autowired
-    private MessageBodyMapper messageBodyMapper;
-
-    @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
-
-    @Autowired
-    private GroupMessageHistoryMapper groupMessageHistoryMapper;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private ConversationService conversationService;
+
+    @Autowired
+    private GroupMemberService groupMemberService;
+
+    @Autowired
+    private ApplicationConfiguration configuration;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -80,6 +82,55 @@ public class MessageStoreServiceImpl implements MessageStoreService {
             return null;
         }
         return JSONObject.parseObject(str, clazz);
+    }
+
+    @Override
+    public void storeOfflineMessage(OfflineMessageContent offlineMessageContent) {
+        String fromKey = offlineMessageContent.getAppId() + Constants.RedisConstants.OFFLINE_MESSAGE + offlineMessageContent.getFromId();
+        String toKey = offlineMessageContent.getAppId() + Constants.RedisConstants.OFFLINE_MESSAGE + offlineMessageContent.getToId();
+        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
+        //判断队列中的离线消息是否超过限定值
+        if(operations.zCard(fromKey) > configuration.getOfflineMessageCount()) {
+            operations.removeRange(fromKey, 0, 0);
+        }
+        offlineMessageContent.setConversationId(
+                conversationService.generateConversationId(
+                        offlineMessageContent.getConversationType(),
+                        offlineMessageContent.getFromId(),
+                        offlineMessageContent.getToId())
+        );
+        operations.add(fromKey, JSONObject.toJSONString(offlineMessageContent), offlineMessageContent.getMessageKey());
+        if(operations.zCard(toKey) > configuration.getOfflineMessageCount()) {
+            operations.removeRange(toKey, 0, 0);
+        }
+        offlineMessageContent.setConversationId(
+                conversationService.generateConversationId(
+                        offlineMessageContent.getConversationType(),
+                        offlineMessageContent.getToId(),
+                        offlineMessageContent.getFromId())
+        );
+        operations.add(toKey, JSONObject.toJSONString(offlineMessageContent), offlineMessageContent.getMessageKey());
+
+    }
+
+    @Override
+    public void storeGroupOfflineMessage(GroupOfflineMessageContent offlineMessageContent,
+                                         List<String> groupMemberIdList) {
+        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
+        for(String memberId : groupMemberIdList) {
+            String memberKey = offlineMessageContent.getAppId() + Constants.RedisConstants.OFFLINE_MESSAGE + memberId;
+            //判断队列中的离线消息是否超过限定值
+            if(operations.zCard(memberKey) > configuration.getOfflineMessageCount()) {
+                operations.removeRange(memberKey, 0, 0);
+            }
+            offlineMessageContent.setConversationId(
+                    conversationService.generateConversationId(
+                            offlineMessageContent.getConversationType(),
+                            offlineMessageContent.getFromId(),
+                            offlineMessageContent.getGroupId())
+            );
+            operations.add(memberKey, JSONObject.toJSONString(offlineMessageContent), offlineMessageContent.getMessageKey());
+        }
     }
 
     private StoredMessageBody transformToMessageBody(MessageContent messageContent) {

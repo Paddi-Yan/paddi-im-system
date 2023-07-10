@@ -61,7 +61,7 @@ public class ApplicationConfiguration {
 
     private boolean sendMessageBeforeCallback;//发送单聊消息之前
 
-    private Integer deleteConversationSyncMode;
+    private Integer deleteConversationSyncMode; //删除会话后是否多端同步
 
     private Integer offlineMessageCount;//离线消息最大条数
 

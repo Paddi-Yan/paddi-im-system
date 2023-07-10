@@ -4,16 +4,19 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.paddi.codec.pack.message.ChatMessageACK;
 import com.paddi.codec.pack.message.MessageReceiveServerACKPackage;
 import com.paddi.common.constants.Constants;
+import com.paddi.common.enums.ConversationTypeEnum;
 import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.common.model.message.MessageContent;
+import com.paddi.common.model.message.OfflineMessageContent;
 import com.paddi.service.module.message.service.CheckSendMessageService;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.module.message.service.P2PMessageService;
 import com.paddi.service.utils.MessageProducer;
 import com.paddi.service.utils.RedisSequenceGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +94,13 @@ public class P2PMessageServiceImpl implements P2PMessageService {
         threadPoolExecutor.execute(() -> {
             //数据持久化
             messageStoreService.storeMessage(messageContent);
+
+            //存储离线消息
+            OfflineMessageContent offlineMessageContent = new OfflineMessageContent();
+            BeanUtils.copyProperties(messageContent, offlineMessageContent);
+            offlineMessageContent.setConversationType(ConversationTypeEnum.P2P.getCode());
+            messageStoreService.storeOfflineMessage(offlineMessageContent);
+
             //回复ACK给发送方
             sendACK(messageContent, Result.success());
             //同步给发送方的其他在线端

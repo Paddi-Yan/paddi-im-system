@@ -3,6 +3,9 @@ package com.paddi.service.module.group.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.paddi.service.module.group.entity.po.Group;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @Author: Paddi-Yan
@@ -11,4 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface GroupMapper extends BaseMapper<Group> {
+    Long getMaxSequence(@Param("appId") Integer appId,@Param("list") List<String> groupIdList);
 }

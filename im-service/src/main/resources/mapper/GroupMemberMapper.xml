@@ -18,6 +18,7 @@
         from im_group_member
         where app_id = #{appId}
         and member_id = #{memberId}
+        and role != 3
     </select>
 
     <select id="getGroupMemberId" resultType="java.lang.String">

@@ -581,5 +581,10 @@ public class FriendShipServiceImpl implements FriendShipService {
         return Result.success(syncResponse);
     }
 
+    @Override
+    public List<String> getFriendList(Integer appId, String userId) {
+        return friendShipMapper.getFriendList(appId, userId);
+    }
+
 
 }

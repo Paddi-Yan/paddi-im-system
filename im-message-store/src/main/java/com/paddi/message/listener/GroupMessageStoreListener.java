@@ -30,7 +30,7 @@ public class GroupMessageStoreListener implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String message) {
-        log.info("CHAT MSG FORM QUEUE ::: {}", message);
+        log.info("CHAT MSG FORM SERVICE MODULE ::: {}", message);
         JSONObject obj = JSON.parseObject(message);
         DoStoreGroupMessageDTO doStoreGroupMessageDTO = obj.toJavaObject(DoStoreGroupMessageDTO.class);
         messageStoreService.storeGroupMessage(doStoreGroupMessageDTO);

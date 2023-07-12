@@ -6,6 +6,8 @@ import com.paddi.common.model.message.SyncRequest;
 import com.paddi.service.module.friendship.entity.dto.FriendDTO;
 import com.paddi.service.module.friendship.model.req.*;
 
+import java.util.List;
+
 /**
  * @Author: Paddi-Yan
  * @Project: im-system
@@ -37,4 +39,6 @@ public interface FriendShipService {
     Result checkBlack(CheckFriendShipRequest request);
 
     Result syncFriendShipList(SyncRequest request);
+
+    List<String> getFriendList(Integer appId, String userId);
 }

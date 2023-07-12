@@ -3,6 +3,7 @@ package com.paddi.service.module.user.controller;
 import com.paddi.common.model.Result;
 import com.paddi.service.module.user.model.req.*;
 import com.paddi.service.module.user.service.UserService;
+import com.paddi.service.module.user.service.UserStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserStatusService userStatusService;
 
     @PostMapping("/importUser")
     public Result importUser(@RequestBody ImportUserRequest request, Integer appId) {
@@ -54,6 +57,24 @@ public class UserController {
         return userService.getSyncProgress(request);
     }
 
+    @PostMapping("/subscribeUserOnlineStatus")
+    public Result subscribeUserOnlineStatus(@RequestBody SubscribeUserOnlineStatusRequest request) {
+        return userStatusService.subscribeUserOnlineStatus(request);
+    }
 
+    @PostMapping("/setUserCustomizedOnlineStatus")
+    public Result setUserCustomizedOnlineStatus(@RequestBody SetUserCustomizedOnlineStatusRequest request) {
+        return userStatusService.setUserCustomizedOnlineStatus(request);
+    }
+
+    @GetMapping("/getFriendOnlineStatus")
+    public Result getFriendOnlineStatus(@RequestBody PullFriendOnlineStatusRequest request) {
+        return userStatusService.getFriendOnlineStatus(request);
+    }
+
+    @GetMapping("/getUserOnlineStatus")
+    public Result getUserOnlineStatus(@RequestBody PullUserOnlineStatusRequest request) {
+        return userStatusService.getUserOnlineStatus(request);
+    }
 }
 

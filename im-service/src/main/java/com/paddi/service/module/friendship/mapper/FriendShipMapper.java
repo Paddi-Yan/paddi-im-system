@@ -25,4 +25,6 @@ public interface FriendShipMapper extends BaseMapper<FriendShip> {
     List<CheckFriendShipResponse> checkBlackFriendShipBoth(CheckFriendShipRequest request);
 
     Long getFriendShipMaxSequence(@Param("appId") Integer appId, @Param("userId") String operator);
+
+    List<String> getFriendList(@Param("appId") Integer appId, @Param("userId") String userId);
 }

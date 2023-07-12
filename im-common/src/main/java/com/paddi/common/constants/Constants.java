@@ -69,12 +69,12 @@ public class Constants {
         /**
          * 用户订阅列表，格式 ：appId + :subscribe: + userId。Hash结构，filed为订阅自己的人
          */
-        public static final String SUBSCRIBE = "subscribe";
+        public static final String SUBSCRIBE = ":subscribe:";
 
         /**
          * 用户自定义在线状态，格式 ：appId + :userCustomerStatus: + userId。set，value为用户id
          */
-        public static final String USER_CUSTOMER_STATUS = "user-customer-status";
+        public static final String USER_CUSTOMIZED_STATUS = ":user-customized-status:";
 
     }
 
@@ -100,6 +100,7 @@ public class Constants {
         public static final String STORE_GROUP_MESSAGE_GROUP = "StoreGroupMessageConsumerGroup";
         public static final String STORE_MESSAGE_SERVICE_GROUP = "StoreChatMessageConsumerGroup";
 
+        public static final String USER_ONLINE_STATUS_GROUP = "UserOnlineStatusGroup";
 
         public static final String MESSAGE_SERVICE_GROUP = "ChatMessageConsumerGroup";
         public static final String GROUP_MESSAGE_SERVICE_GROUP = "GroupChatMessageConsumerGroup";

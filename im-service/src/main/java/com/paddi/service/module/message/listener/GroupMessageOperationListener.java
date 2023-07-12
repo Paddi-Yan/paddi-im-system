@@ -37,7 +37,7 @@ public class GroupMessageOperationListener implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String message) {
-        log.info("CHAT MSG FORM QUEUE ::: {}", message);
+        log.info("GROUP CHAT MSG FORM FORM TCP MODULE ::: {}", message);
         JSONObject obj = JSON.parseObject(message);
         Integer command = obj.getInteger(COMMAND);
         if(command.equals(GroupEventCommand.MSG_GROUP.getCommand())) {

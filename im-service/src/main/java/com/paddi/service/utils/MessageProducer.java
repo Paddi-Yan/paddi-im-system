@@ -10,7 +10,6 @@ import com.paddi.common.model.UserSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,9 +23,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class MessageProducer {
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;

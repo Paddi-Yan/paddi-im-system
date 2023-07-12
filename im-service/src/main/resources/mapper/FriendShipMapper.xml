@@ -92,4 +92,17 @@
         where app_id = #{appId}
         and from_id = #{userId}
     </select>
+
+    <select id="getFriendList" resultType="java.lang.String">
+        select to_id
+        from im_friendship
+        where
+            app_id = #{appId}
+        and
+            from_id = #{userId}
+        and
+            status = 1
+        and
+            black = 1
+    </select>
 </mapper>

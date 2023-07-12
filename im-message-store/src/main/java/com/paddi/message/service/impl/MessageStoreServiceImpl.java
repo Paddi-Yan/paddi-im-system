@@ -36,6 +36,10 @@ public class MessageStoreServiceImpl implements MessageStoreService {
     @Transactional(rollbackFor = Exception.class)
     public void storeMessage(DoStoreP2PMessageDTO doStoreP2PMessageDTO) {
         StoredMessageBody storedMessageBody = doStoreP2PMessageDTO.getStoredMessageBody();
+        MessageBody messageBodyFromDB = messageBodyMapper.selectById(storedMessageBody.getMessageKey());
+        if(messageBodyFromDB != null) {
+            return;
+        }
         MessageBody messageBody = insertMessageBody(storedMessageBody);
         List<MessageHistory> messageHistories = transformToMessageHistories(doStoreP2PMessageDTO.getMessageContent(), messageBody);
         messageHistoryMapper.insertBatchSomeColumn(messageHistories);
@@ -45,6 +49,10 @@ public class MessageStoreServiceImpl implements MessageStoreService {
     @Transactional(rollbackFor = Exception.class)
     public void storeGroupMessage(DoStoreGroupMessageDTO doStoreGroupMessageDTO) {
         StoredMessageBody storedMessageBody = doStoreGroupMessageDTO.getStoredMessageBody();
+        MessageBody messageBodyFromDB = messageBodyMapper.selectById(storedMessageBody.getMessageKey());
+        if(messageBodyFromDB != null) {
+            return;
+        }
         MessageBody messageBody = insertMessageBody(storedMessageBody);
         GroupMessageHistory groupMessageHistory = transformToGroupMessageHistory(doStoreGroupMessageDTO.getMessageContent(), messageBody);
         groupMessageHistoryMapper.insert(groupMessageHistory);

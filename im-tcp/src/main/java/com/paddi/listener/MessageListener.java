@@ -33,12 +33,12 @@ public class MessageListener {
                 for(MessageExt messageExt : list) {
                     try {
                         String message = new String(messageExt.getBody());
-                        log.info("detail message content: {}", message);
+                        log.info("GROUP CHAT MSG FORM FORM SERVICE MODULE ::: {}", message);
                         MessagePackage messagePackage = JSONObject.parseObject(message, MessagePackage.class);
                         AbstractProcessor processor = ProcessorFactory.getMessageProcessor(messagePackage.getCommand());
                         processor.process(messagePackage);
                     } catch(Exception e) {
-                        log.warn("consume message failed. messageExt:{}, error:{}", messageExt, e);
+                        log.warn("CONSUME MESSAGE FAILED. MESSAGE:{}, error:{}", messageExt, e);
                         return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                     }
                 }

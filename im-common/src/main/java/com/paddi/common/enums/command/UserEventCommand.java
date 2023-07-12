@@ -5,9 +5,10 @@ public enum UserEventCommand implements Command {
     //用户修改command 4000
     USER_MODIFY(4000),
 
-    //4001
+    /** TCP层发送给逻辑层 */
     USER_ONLINE_STATUS_CHANGE(4001),
 
+    /** 逻辑层发送给客户端 */
 
     //4004 用户在线状态通知报文
     USER_ONLINE_STATUS_CHANGE_NOTIFY(4004),

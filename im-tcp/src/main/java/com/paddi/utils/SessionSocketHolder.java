@@ -3,9 +3,13 @@ package com.paddi.utils;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.paddi.codec.pack.user.UserStatusChangeNotifyPackage;
+import com.paddi.codec.protocol.MessageHeader;
 import com.paddi.common.enums.ConnectionStatusEnum;
+import com.paddi.common.enums.command.UserEventCommand;
 import com.paddi.common.model.UserClientDTO;
 import com.paddi.common.model.UserSession;
+import com.paddi.publish.MessageProducer;
 import com.paddi.redis.RedisManager;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
@@ -74,7 +78,23 @@ public class SessionSocketHolder {
         String sessionCacheKey = appId + USER_SESSION + userId;
         RMap<String, String> map = redissonClient.getMap(sessionCacheKey);
         map.remove(clientType + ":" + imei);
+
+        sendUserOnlineStatusChangeMessageToLogicModule(userId, appId, clientType, imei);
+
         channel.close();
+    }
+
+    private static void sendUserOnlineStatusChangeMessageToLogicModule(String userId, Integer appId, Integer clientType, String imei) {
+        MessageHeader messageHeader = MessageHeader.builder()
+                                           .appId(appId)
+                                           .imei(imei)
+                                           .clientType(clientType)
+                                           .build();
+        UserStatusChangeNotifyPackage userStatusChangeNotifyPackage = new UserStatusChangeNotifyPackage();
+        userStatusChangeNotifyPackage.setUserId(userId);
+        userStatusChangeNotifyPackage.setAppId(appId);
+        userStatusChangeNotifyPackage.setStatus(ConnectionStatusEnum.OFFLINE_STATUS.getCode());
+        MessageProducer.sendMessage(userStatusChangeNotifyPackage, messageHeader, UserEventCommand.USER_ONLINE_STATUS_CHANGE.getCommand());
     }
 
     public static void offlineUserSession(NioSocketChannel channel) {
@@ -96,6 +116,9 @@ public class SessionSocketHolder {
             userSession.setConnectionState(ConnectionStatusEnum.OFFLINE_STATUS.getCode());
             map.put(fieldKey, JSON.toJSONString(userSession));
         }
+
+        sendUserOnlineStatusChangeMessageToLogicModule(userId, appId, clientType, imei);
+
     }
 
 }

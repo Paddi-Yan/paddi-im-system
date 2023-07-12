@@ -1,6 +1,7 @@
 package com.paddi.service.module.message.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.paddi.codec.pack.message.ChatMessageACK;
 import com.paddi.codec.pack.message.MessageReceiveServerACKPackage;
 import com.paddi.common.constants.Constants;
@@ -10,21 +11,20 @@ import com.paddi.common.model.ClientInfo;
 import com.paddi.common.model.Result;
 import com.paddi.common.model.message.MessageContent;
 import com.paddi.common.model.message.OfflineMessageContent;
+import com.paddi.service.config.ApplicationConfiguration;
 import com.paddi.service.module.message.service.CheckSendMessageService;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.module.message.service.P2PMessageService;
+import com.paddi.service.utils.CallbackService;
 import com.paddi.service.utils.MessageProducer;
 import com.paddi.service.utils.RedisSequenceGenerator;
+import com.paddi.service.utils.SharedThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: Paddi-Yan
@@ -47,16 +47,14 @@ public class P2PMessageServiceImpl implements P2PMessageService {
     @Autowired
     private RedisSequenceGenerator sequenceGenerator;
 
-    private final ThreadPoolExecutor threadPoolExecutor;{
-        AtomicInteger counter = new AtomicInteger(0);
-        threadPoolExecutor = new ThreadPoolExecutor(8, 8, 60, TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(1024), runnable -> {
-                    Thread thread = new Thread(runnable);
-                    thread.setName("message-process-thread-" + counter.decrementAndGet());
-                    thread.setDaemon(true);
-                    return thread;
-                });
-    }
+    @Autowired
+    private ApplicationConfiguration configuration;
+
+    @Autowired
+    private CallbackService callbackService;
+
+    @Autowired
+    private SharedThreadPool sharedThreadPool;
 
     @Override
     public void process(MessageContent messageContent) {
@@ -68,7 +66,7 @@ public class P2PMessageServiceImpl implements P2PMessageService {
         MessageContent messageFromCache = messageStoreService.getMessageFromCache(messageContent.getAppId(), messageContent.getMessageId(), MessageContent.class);
         if(messageFromCache != null) {
             //不需要进行持久化 直接分发消息
-            threadPoolExecutor.execute(() -> {
+            sharedThreadPool.submit(() -> {
                 //回复ACK给发送方
                 sendACK(messageFromCache, Result.success());
                 //同步给发送方的其他在线端
@@ -83,6 +81,15 @@ public class P2PMessageServiceImpl implements P2PMessageService {
             return;
         }
 
+        //回调: 可用于给业务服务器拓展,例如限制陌生人聊天
+        if(configuration.isSendMessageBeforeCallback()) {
+            Result result = callbackService.callbackSync(appId, Constants.CallbackCommand.SendMessageBefore, JSONObject.toJSONString(messageContent));
+            if(!result.isSuccess()) {
+                sendACK(messageContent, result);
+                return;
+            }
+        }
+
         //sequenceKey: appId + Seq + (from + to) / group
         String key = appId + Constants.SequenceConstants.Message + formalize(messageContent.getFromId(), messageContent.getToId());
         Long sequence = sequenceGenerator.generate(key);
@@ -91,7 +98,7 @@ public class P2PMessageServiceImpl implements P2PMessageService {
         //前置校验-已迁移至TCP网关层完成校验
         //是否被禁用/是否被禁言
         //发送方和接收方是否是好友
-        threadPoolExecutor.execute(() -> {
+        sharedThreadPool.submit(() -> {
             //数据持久化
             messageStoreService.storeMessage(messageContent);
 
@@ -113,6 +120,10 @@ public class P2PMessageServiceImpl implements P2PMessageService {
             }
             //将消息存入到缓存中
             messageStoreService.setMessageToCache(messageContent);
+
+            if(configuration.isSendMessageAfterCallback()) {
+                callbackService.callbackAsync(appId, Constants.CallbackCommand.SendMessageAfter, JSONObject.toJSONString(messageContent));
+            }
         });
     }
 

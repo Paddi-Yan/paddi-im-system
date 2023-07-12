@@ -25,12 +25,17 @@ public class CallbackService {
     @Autowired
     private ApplicationConfiguration applicationConfiguration;
 
+    @Autowired
+    private SharedThreadPool sharedThreadPool;
+
     public void callbackAsync(Integer appId, String callbackCommand, String jsonBody) {
-        try {
-            httpUtils.doPost(applicationConfiguration.getCallbackUrl(), Object.class, buildUrlParams(appId, callbackCommand), jsonBody, null);
-        } catch(Exception e) {
-            log.error("callback [{}]:[{}] error=[{}]", callbackCommand, appId, e.getMessage());
-        }
+        sharedThreadPool.submit(() -> {
+            try {
+                httpUtils.doPost(applicationConfiguration.getCallbackUrl(), Object.class, buildUrlParams(appId, callbackCommand), jsonBody, null);
+            } catch(Exception e) {
+                log.error("callback [{}]:[{}] error=[{}]", callbackCommand, appId, e.getMessage());
+            }
+        });
     }
 
     public Result callbackSync(Integer appId, String callbackCommand, String jsonBody) {

@@ -7,6 +7,7 @@ import com.paddi.common.enums.command.MessageCommand;
 import com.paddi.common.model.message.MessageContent;
 import com.paddi.common.model.message.MessageReadContent;
 import com.paddi.common.model.message.MessageReceiveACKContent;
+import com.paddi.common.model.message.RecallMessageContent;
 import com.paddi.service.module.message.service.GroupMessageService;
 import com.paddi.service.module.message.service.MessageSyncService;
 import com.paddi.service.module.message.service.P2PMessageService;
@@ -55,6 +56,9 @@ public class MessageOperationListener implements RocketMQListener<String> {
         } else if(command.equals(MessageCommand.MSG_READ.getCommand())) {
             MessageReadContent messageReadContent = obj.toJavaObject(MessageReadContent.class);
             messageSyncService.messageReadNotify(messageReadContent);
+        } else if(command.equals(MessageCommand.MSG_RECALL.getCommand())) {
+            RecallMessageContent recallMessageContent = obj.toJavaObject(RecallMessageContent.class);
+            messageSyncService.recallMessage(recallMessageContent);
         }
     }
 }

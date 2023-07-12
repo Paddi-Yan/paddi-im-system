@@ -13,15 +13,12 @@ import com.paddi.service.module.message.service.GroupMessageService;
 import com.paddi.service.module.message.service.MessageStoreService;
 import com.paddi.service.utils.MessageProducer;
 import com.paddi.service.utils.RedisSequenceGenerator;
+import com.paddi.service.utils.SharedThreadPool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: Paddi-Yan
@@ -46,16 +43,8 @@ public class GroupMessageServiceImpl implements GroupMessageService {
     @Autowired
     private RedisSequenceGenerator sequenceGenerator;
 
-    private final ThreadPoolExecutor threadPoolExecutor;{
-        AtomicInteger counter = new AtomicInteger(0);
-        threadPoolExecutor = new ThreadPoolExecutor(8, 8, 60, TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(1024), runnable -> {
-            Thread thread = new Thread(runnable);
-            thread.setName("group-message-process-thread-" + counter.decrementAndGet());
-            thread.setDaemon(true);
-            return thread;
-        });
-    }
+    @Autowired
+    private SharedThreadPool sharedThreadPool;
 
     @Override
     public void process(GroupChatMessageContent groupChatMessageContent) {
@@ -68,7 +57,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
                 groupChatMessageContent.getMessageId(),
                 GroupChatMessageContent.class);
         if(messageFromCache != null) {
-            threadPoolExecutor.execute(() -> {
+            sharedThreadPool.submit(() -> {
                 sendACK(messageFromCache, Result.success());
                 syncToSender(messageFromCache);
                 dispatchMessage(messageFromCache, groupMemberIdList);
@@ -83,7 +72,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
         Long sequence = sequenceGenerator.generate(key);
         groupChatMessageContent.setMessageSequence(sequence);
 
-        threadPoolExecutor.execute(() -> {
+        sharedThreadPool.submit(() -> {
             messageStoreService.storeGroupMessage(groupChatMessageContent);
 
             //存储离线消息

@@ -54,7 +54,7 @@ public class GroupMessageProducer {
         }
     }
 
-    private void sendMessageByMemberType(String userId, Command command, Object data, ClientInfo clientInfo,
+    public void sendMessageByMemberType(String userId, Command command, Object data, ClientInfo clientInfo,
                            List<String> groupMemberId) {
         for(String memberId : groupMemberId) {
             if(clientInfo.getClientType() != null && clientInfo.getClientType() != ClientType.WEBAPI.getCode() && userId.equals(memberId)) {

@@ -72,7 +72,6 @@ public class MessageProducer {
         }
     }
 
-
     /**
      * 发送给所有终端
      */

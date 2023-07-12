@@ -25,6 +25,8 @@ public class ApplicationConfiguration {
 
     private String callbackUrl;
 
+    private Long messageRecallTimeout = 1000 * 60 * 2L; //消息撤回的最大间隔时间
+
     private boolean modifyUserAfterCallback; //用户资料变更之后回调开关
 
     private boolean addFriendAfterCallback; //添加好友之后回调开关
